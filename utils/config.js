@@ -1,12 +1,16 @@
 require('dotenv').config()
 
 const PORT = process.env.PORT
-let REST_URI = process.env.REST_URI
+const REST_URI = process.env.REST_URI
+const API_KEY = process.env.API_KEY
+const OC_NAME = process.env.OC_NAME
 
 
 module.exports = {
     PORT,
-    REST_URI
+    REST_URI,
+    API_KEY,
+    OC_NAME
 }
 
 /*
