@@ -16,5 +16,12 @@ OC_Service.AgentsOnline()
 OC_Service.AgentsAll()
 */
 
+const update = () => {
+    const agents = OC_Service.AgentsOnline()
+    const queue = OC_Service.GeneralQueue()
+    console.log('aa_______________________bb')
+} 
+
+setInterval(update, 4000)
 
 module.exports = app

@@ -13,13 +13,11 @@ pushRouter.get('/teams', async (request, response) => {
 })
 
 pushRouter.get('/agents', async (request, response) => {
-    const agents = await Pullers.AgentsOnline()
-    response.json(agents)
+    response.json(Pullers.GetAgents())
 })
 
 pushRouter.get('/queue', async (request, response) => {
-    const queue = await Pullers.GeneralQueue()
-    response.json(queue)
+    response.json(Pullers.GetQueue())
 })
 
 pushRouter.get('/services', async (request, response) => {

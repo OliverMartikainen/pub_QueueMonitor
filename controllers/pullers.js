@@ -7,7 +7,8 @@ const fs = require('fs')
 
 //reconsider names later - service?
 //can consider testing if Agents return same numb of agents as agentonlinestate
-
+var Agents
+var Queue
 
 const reqConfig = (URL) => {            //returns JSON for request configuration
     return {
@@ -70,23 +71,25 @@ const AgentsAll = () => axios(reqConfig('agents'))
     })
 
 
-//get every 6s - seems like real time
+//get every 6s or more - WHERE do i get Calls??? 
 const GeneralQueue = () => axios(reqConfig('generalqueue'))
     .then(response => {
-        console.log(`API GET - queueu:`, response.data.length, response.status, response.statusText)
-        return response.data
+        Queue = response.data
+        console.log(`API GET - queueu:`, response.headers.date, response.data.length, response.status, response.statusText)
+        return response.headers.date, response.data.length, response.status, response.statusText 
         //localStore_test('../localDB/db_queue.json', response, 'queue')
     })
 
 const AgentsOnline = async () => axios(reqConfig('agentonlinestate'))
     .then(response => {
-        console.log(`API GET - agents:`, response.data.length, response.status, response.statusText)
-        return response.data
+        console.log(`API GET - agents:`, response.headers.date, response.data.length, response.status, response.statusText)
+        Agents = response.data
+        return response.headers.date, response.data.length, response.status, response.statusText
         //localStore_test('../localDB/db_agents_online.json', response, 'agents')
     })
 
-
-//connection test
+const GetAgents = () => Agents
+const GetQueue = () => Queue
 
 const HelloWorld = () => axios(reqConfig('helloworld'))
     .then(response => {
@@ -94,5 +97,5 @@ const HelloWorld = () => axios(reqConfig('helloworld'))
     })
 
 module.exports = {
-    Teams, Services, AgentsAll, AgentsOnline, GeneralQueue, HelloWorld
+    Teams, Services, AgentsAll, AgentsOnline, GeneralQueue, HelloWorld, GetQueue, GetAgents,
 }
