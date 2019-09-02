@@ -1,6 +1,8 @@
 #private
 db_teams.json
 db_users.json
+db_services.json
+data/
 
 
 # Logs

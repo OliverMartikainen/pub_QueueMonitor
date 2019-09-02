@@ -8,8 +8,13 @@ const fs = require('fs')
 
 
 pushRouter.get('/teams', async (request, response) => {
-    const teams = await Pullers.Teams()
-    response.json(teams)
+    fs.readFile('./public/data/db_teams_plain.json', (err, data) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        response.json(JSON.parse(data).teams)
+    })
 })
 
 pushRouter.get('/agents', async (request, response) => {
@@ -21,23 +26,36 @@ pushRouter.get('/queue', async (request, response) => {
 })
 
 pushRouter.get('/services', async (request, response) => {
-    const services = await Pullers.Services()
-    response.json(services)
-})
-
-
-/*   
-var teams
-    fs.readFile('../localDB/db_teams.json', 'utf8', (err, data) => {
-        if(err) {
-            console.error(err, 'aa')
+    fs.readFile('./public/data/db_services.json', (err, data) => {
+        if (err) {
+            console.error(err)
             return
         }
-        teams = JSON.parse(data)
+        response.json(JSON.parse(data).services)
     })
-    console.log({teams}, 'aa')
-    */
+})
 
+//atm no readl id so do that
+pushRouter.put('/teams/:id', async (request, response) => {
+    const updateTeams = (teams, id) => {
+        
+        //fs.writeFile - replace entire file with new or find an update method
+    }
+
+    fs.readFile('./public/data/db_teams.json', (err, data) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        const teams = JSON.parse(data)
+
+
+
+    })
+
+
+
+})
 
 module.exports = pushRouter
 

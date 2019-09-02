@@ -55,14 +55,12 @@ const Teams = () => axios(reqConfig('teams'))    //used to update db_teams once 
     .then(response => {
         console.log(`API GET - teams:`, response.data.length, response.status, response.statusText)
         return response.data
-        //localStore_test('../localDB/db_teams_api.json', response, 'teams')
     })
 
 const Services = () => axios(reqConfig('services'))
     .then(response => {
         console.log(`API GET - services:`, response.data.length, response.status, response.statusText)
         return response.data
-        //localStore_test('../localDB/db_services.json', response, 'services')
     })
 
 const AgentsAll = () => axios(reqConfig('agents'))
@@ -77,7 +75,6 @@ const GeneralQueue = () => axios(reqConfig('generalqueue'))
         Queue = response.data
         console.log(`API GET - queueu:`, response.headers.date, response.data.length, response.status, response.statusText)
         return response.headers.date, response.data.length, response.status, response.statusText 
-        //localStore_test('../localDB/db_queue.json', response, 'queue')
     })
 
 const AgentsOnline = async () => axios(reqConfig('agentonlinestate'))
@@ -85,7 +82,6 @@ const AgentsOnline = async () => axios(reqConfig('agentonlinestate'))
         console.log(`API GET - agents:`, response.headers.date, response.data.length, response.status, response.statusText)
         Agents = response.data
         return response.headers.date, response.data.length, response.status, response.statusText
-        //localStore_test('../localDB/db_agents_online.json', response, 'agents')
     })
 
 const GetAgents = () => Agents
