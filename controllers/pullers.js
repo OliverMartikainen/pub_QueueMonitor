@@ -6,9 +6,9 @@ const axios = require('axios')
 const fs = require('fs')
 
 //reconsider names later - service?
-//can consider testing if Agents return same numb of agents as agentonlinestate
-var Agents
-var Queue
+var AgentsOnline  // same as API AgentsOnline
+var Queue //same as API GeneralQueue
+var Teams //array of team {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
 
 const reqConfig = (URL) => {            //returns JSON for request configuration
     return {
@@ -31,15 +31,9 @@ const responseFormat = (response, dataType) => {
     return temp
 }
 
-const updateLocalDB = (response, dataType) => { //maybe not needed
-    console.log(`API GET - ${dataType}:`, response.data.length, response.status, response.statusText)
-    const jsonItem = responseFormat(response, dataType)
-
-}
-
 //still need to check for STATUS != 200
 const localStore_test = (file, response, dataType) => {
-    console.log(`API GET - ${dataType}:`, response.data.length, response.status, response.statusText)
+    console.log(`API GET TO STORE - ${dataType}:`, response.data.length, response.status, response.statusText)
     const jsonItem = responseFormat(response, dataType)
     fs.writeFile(file, JSON.stringify(jsonItem, null, 4), (err) => {
         if (err) {
@@ -50,42 +44,47 @@ const localStore_test = (file, response, dataType) => {
     })
 }
 
-//get once per day
-const Teams = () => axios(reqConfig('teams'))    //used to update db_teams once per day
+//use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
+const GetAgentProfiles = () => axios(reqConfig('agentprofiles'))
     .then(response => {
-        console.log(`API GET - teams:`, response.data.length, response.status, response.statusText)
+        console.log(`API GET - Profiles:`, response.data.length, response.status, response.statusText)
         return response.data
     })
 
-const Services = () => axios(reqConfig('services'))
+    //get the team of agents
+const GetAgentsAll = () => axios(reqConfig('agents'))
     .then(response => {
-        console.log(`API GET - services:`, response.data.length, response.status, response.statusText)
+        console.log(`API GET - Agents:`, response.data.length, response.status, response.statusText)
         return response.data
     })
 
-const AgentsAll = () => axios(reqConfig('agents'))
+    //Top level group
+const GetTeams = () => axios(reqConfig('teams'))
     .then(response => {
-        localStore_test('../localDB/db_agents_all.json', response, 'agents_all')
+        console.log(`API GET - Teams:`, response.data.length, response.status, response.statusText)
+        return response.data
     })
 
-
-//get every 6s or more - WHERE do i get Calls??? 
-const GeneralQueue = () => axios(reqConfig('generalqueue'))
+const GetGeneralQueue = () => axios(reqConfig('generalqueue'))
     .then(response => {
         Queue = response.data
-        console.log(`API GET - queueu:`, response.headers.date, response.data.length, response.status, response.statusText)
-        return response.headers.date, response.data.length, response.status, response.statusText 
+        console.log(`API GET - Queue:           `, response.headers.date, response.data.length, response.status, response.statusText)
+        return response.status
     })
 
-const AgentsOnline = async () => axios(reqConfig('agentonlinestate'))
+const GetAgentsOnline = () => axios(reqConfig('agentonlinestate'))
     .then(response => {
-        console.log(`API GET - agents:`, response.headers.date, response.data.length, response.status, response.statusText)
-        Agents = response.data
-        return response.headers.date, response.data.length, response.status, response.statusText
+        console.log(`API GET - AgentsOnline:    `, response.headers.date, response.data.length, response.status, response.statusText)
+        AgentsOnline = response.data
+        return response.status
     })
 
-const GetAgents = () => Agents
-const GetQueue = () => Queue
+    //how do i get rid of these, exporting the var just gives undefined
+const SendAgentsOnline = () => AgentsOnline
+const SendQueue = () => Queue
+const SendTeams = () => Teams
+
+const SetTeams = (teams) => Teams = teams
 
 const HelloWorld = () => axios(reqConfig('helloworld'))
     .then(response => {
@@ -93,5 +92,5 @@ const HelloWorld = () => axios(reqConfig('helloworld'))
     })
 
 module.exports = {
-    Teams, Services, AgentsAll, AgentsOnline, GeneralQueue, HelloWorld, GetQueue, GetAgents,
+    GetAgentProfiles, GetTeams, GetGeneralQueue, GetAgentsOnline, GetAgentsAll, SendAgentsOnline, SendQueue, SendTeams, SetTeams
 }
