@@ -8,16 +8,7 @@ const fs = require('fs')
 
 
 pushRouter.get('/teams', async (request, response) => {
-    response.json(Pullers.SendTeams)
-    /* //old
-    fs.readFile('./public/data/db_teams_plain.json', (err, data) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-        response.json(JSON.parse(data).teams)
-    })
-    */
+    response.json(Pullers.SendTeams())
 })
 
 pushRouter.get('/agents', async (request, response) => {

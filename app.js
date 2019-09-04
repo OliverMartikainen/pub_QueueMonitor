@@ -39,11 +39,11 @@ const initialize = async () => {
     }
 
     //Each team has {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
-    Teams.forEach(team => {
+    Teams.forEach((team, index) => {
         team.Profiles = Profiles.filter(profile => profile.TeamName === team.TeamName)
         teamProfile = {
             TeamName: team.TeamName,
-            AgentId: -2, //Could cause issues if database has same agentid - shouldnt though 
+            AgentId: index, //Could cause issues if database has same agentid - shouldnt though 
             AgentName: 'ALL',
             ServiceIds: teamServices(team.Profiles) //all teams services in one profile
         }
@@ -59,8 +59,8 @@ const initialize = async () => {
 
 //dev version restarts due to changes
 
-setInterval(update, 5500)
+setInterval(update, 4000)
 initialize()
-setInterval(initialize, 36000) //1. per hour
+setInterval(initialize, 3600000) //1. per hour 1000*3600 = 3 600 000
 
 module.exports = app
