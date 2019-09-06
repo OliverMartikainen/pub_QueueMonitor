@@ -7,11 +7,12 @@ const pushRouter = require('./controllers/pushers')
 
 app.use(cors())
 app.use('/api', pushRouter)
+app.use(express.static('build'))
 
 const update = async () => {
     await OC_Service.GetAgentsOnline()
     await OC_Service.GetGeneralQueue()
-    console.log('aa_______________________bb')
+    console.log('_______________________')
 }
 
 //does async work here too?
