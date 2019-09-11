@@ -4,6 +4,8 @@ const app = express()
 const cors = require('cors')
 const OC_Service = require('./controllers/pullers')
 const pushRouter = require('./controllers/pushers')
+const Locals = require('./controllers/locals')
+const formats = require('./formats/databaseToLocal')
 
 app.use(cors())
 app.use('/api', pushRouter)
@@ -13,55 +15,42 @@ const update = async () => {
     await OC_Service.GetAgentsOnline()
     await OC_Service.GetGeneralQueue()
     console.log('_______________________')
+    reportUpdater()
 }
 
 //does async work here too?
-const initialize = async () => {
-    var Teams = await OC_Service.GetTeams() //main group category
-    var Agents = await OC_Service.GetAgentsAll() //has agent - team link
-    var Profiles = await OC_Service.GetAgentProfiles() //has agent service link
-    if (Agents.length != Profiles.length) {
-        console.log('Agents count mismatch', Agents.length, Profiles.length)
+const initialize =  async () => {
+    const GetServiceStatus = await OC_Service.GetServices() //returns respone status
+    let Teams =  await OC_Service.GetTeams() //main group category
+    let Agents =  await OC_Service.GetAgentsAll() //has agent - team link
+    let Profiles =  await OC_Service.GetAgentProfiles() //has agent service link
+    Locals.Teams = formats.setTeams(Teams, Agents, Profiles)
+    if(GetServiceStatus !== 200) {
+        console.log('GetService failed, status: ', GetServiceStatus)
     }
-
-    //each profile has {TeamName, AgentId, AgentName, ServiceIds[]}
-    Profiles.forEach(profile => {
-        agent = Agents.find(agent => agent.AgentId === profile.AgentId)
-        profile.TeamName = agent.TeamName
-        profile.ServiceIds = profile.Profiles.map(list => list.ServiceId) //list used to filter queue
-        profile.AgentName = `${agent.LastName} ${agent.FirstName}` //name used in options
-        delete profile.Profiles
-    })
-
-    const teamServices = (profiles) => {
-        var allServices = []
-        profiles.forEach(profile => allServices = [...allServices, ...profile.ServiceIds])
-        return allServices.filter((item, index) => allServices.indexOf(item) === index) //removes duplicates - indexOf returns first item, if index is different == duplicate
-    }
-
-    //Each team has {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
-    Teams.forEach((team, index) => {
-        team.Profiles = Profiles.filter(profile => profile.TeamName === team.TeamName)
-        teamProfile = {
-            TeamName: team.TeamName,
-            AgentId: index, //Could cause issues if database has same agentid - shouldnt though 
-            AgentName: 'ALL',
-            ServiceIds: teamServices(team.Profiles) //all teams services in one profile
-        }
-        team.Profiles.push(teamProfile)
-    })
-
-    OC_Service.SetTeams(Teams)
-
-    //this begins to be the moment tests begin to be useful - Seems to work fine
-    //console.log(Teams[0].Profiles[0])
 }
+
+/*
+    could add this data for each profile & team, but atm browser has much
+    more extra processing power so will let it handle those calculations
+    Format data to {ServiceName, ServiceId, ContactsPieces, ProcessedPieces}
+    Browser then connects ServiceId of report and profiles
+*/
+const reportUpdater = async () => {
+    const date = new Date().toISOString().substr(0,10) //YYYY-MM-DD
+    let report = await OC_Service.GetInboundReport(date)
+    Locals.InboundReport = formats.setInboundReport(report, Locals.Services)
+}
+
 
 
 //dev version restarts due to changes
 
+
 setInterval(update, 4000)
 initialize()
+reportUpdater()
+
 setInterval(initialize, 3600000) //1. per hour 1000*3600 = 3 600 000
 
 module.exports = app

@@ -1,22 +1,28 @@
 //where the frontend gets its data from
-const Pullers = require('./pullers')
+const Locals = require('./locals')
 //Teams, Services, AgentsAll, AgentsOnline, GeneralQueue, HelloWorld
 
 //need to transform this to get the data, store it in memory and then give it away
 const pushRouter = require('express').Router()
-const fs = require('fs')
-
 
 pushRouter.get('/teams', async (request, response) => {
-    response.json(Pullers.SendTeams())
+    response.json(Locals.Teams)
 })
 
-pushRouter.get('/agents', async (request, response) => {
-    response.json(Pullers.SendAgentsOnline())
+pushRouter.get('/agentsonline', async (request, response) => {
+    console.log('POST Agents')
+    response.json(Locals.AgentsOnline)
 })
 
 pushRouter.get('/queue', async (request, response) => {
-    response.json(Pullers.SendQueue())
+    console.log('POST Queue')
+    response.json(Locals.Queue)
+})
+
+
+pushRouter.get('/inboundreport', async (request, response) => {
+    console.log('POST InboundReport')
+    response.json(Locals.InboundReport)
 })
 
 

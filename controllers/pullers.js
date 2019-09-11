@@ -4,11 +4,9 @@ const API_KEY = config.API_KEY
 const OC_NAME = config.OC_NAME
 const axios = require('axios')
 const fs = require('fs')
+const Locals = require('./locals')
 
 //reconsider names later - service?
-var AgentsOnline  // same as API AgentsOnline
-var Queue //same as API GeneralQueue
-var Teams //array of team {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
 
 const reqConfig = (URL) => {            //returns JSON for request configuration
     return {
@@ -44,6 +42,39 @@ const localStore_test = (file, response, dataType) => {
     })
 }
 
+//date in form YYYY-MM-DD
+const GetInboundReport = (date) => axios({
+    method: 'POST',
+    baseURL: REST_URI,
+    url: 'inboundreport',
+    headers: { 'ApiKey': API_KEY },
+    data: {
+        'OcName': OC_NAME,
+        'ServiceGroupId': '-1',
+        'ServiceId': '-1',
+        'TeamId': '',
+        'AgentId': '-1',
+        'StartDate': `${date}T00:00:00`,
+        'EndDate': `${date}T23:59:59`,
+        'ContactTypes': 'PBX, EMAIL',
+        'contactReportType': 'Service',
+        'ServiceLevelTime': '20',
+        'UseServiceTime': 'false'
+    }
+}).then(response => {
+    console.log(`API GET - Report:`, response.data.length, response.status, response.statusText)
+    return response.data
+})
+
+
+const GetServices = () => axios(reqConfig('services'))
+    .then(response => {
+        console.log(`API GET - Services:`, response.data.length, response.status, response.statusText)
+        Locals.Services = response.data
+        return response.status
+    })
+
+
 //use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
 const GetAgentProfiles = () => axios(reqConfig('agentprofiles'))
     .then(response => {
@@ -51,14 +82,14 @@ const GetAgentProfiles = () => axios(reqConfig('agentprofiles'))
         return response.data
     })
 
-    //get the team of agents
+//get the team of agents
 const GetAgentsAll = () => axios(reqConfig('agents'))
     .then(response => {
         console.log(`API GET - Agents:`, response.data.length, response.status, response.statusText)
         return response.data
     })
 
-    //Top level group
+//Top level group
 const GetTeams = () => axios(reqConfig('teams'))
     .then(response => {
         console.log(`API GET - Teams:`, response.data.length, response.status, response.statusText)
@@ -66,25 +97,18 @@ const GetTeams = () => axios(reqConfig('teams'))
     })
 
 const GetGeneralQueue = () => axios(reqConfig('generalqueue'))
-    .then(response => {
-        Queue = response.data
+    .then(response => {   
         console.log(`API GET - Queue:           `, response.headers.date, response.data.length, response.status, response.statusText)
+        Locals.Queue = response.data
         return response.status
     })
 
 const GetAgentsOnline = () => axios(reqConfig('agentonlinestate'))
     .then(response => {
         console.log(`API GET - AgentsOnline:    `, response.headers.date, response.data.length, response.status, response.statusText)
-        AgentsOnline = response.data
+        Locals.AgentsOnline = response.data
         return response.status
     })
-
-    //how do i get rid of these, exporting the var just gives undefined
-const SendAgentsOnline = () => AgentsOnline
-const SendQueue = () => Queue
-const SendTeams = () => Teams
-
-const SetTeams = (teams) => Teams = teams
 
 const HelloWorld = () => axios(reqConfig('helloworld'))
     .then(response => {
@@ -92,5 +116,5 @@ const HelloWorld = () => axios(reqConfig('helloworld'))
     })
 
 module.exports = {
-    GetAgentProfiles, GetTeams, GetGeneralQueue, GetAgentsOnline, GetAgentsAll, SendAgentsOnline, SendQueue, SendTeams, SetTeams
+    GetInboundReport, GetAgentProfiles, GetTeams, GetGeneralQueue, GetAgentsOnline, GetAgentsAll, GetServices
 }

@@ -3,7 +3,7 @@ db_teams.json
 db_users.json
 db_services.json
 data/
-
+build/
 
 # Logs
 logs
