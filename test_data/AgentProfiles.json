@@ -1,0 +1,8 @@
+[
+    {
+        "AgentName" : "aa",
+        "AgentId" : 1,
+        "TeamName" : "bb",
+        "ServiceIds" : [1,2]
+    }
+]
