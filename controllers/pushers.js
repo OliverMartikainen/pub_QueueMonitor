@@ -10,12 +10,12 @@ pushRouter.get('/teams', async (request, response) => {
 })
 
 pushRouter.get('/agentsonline', async (request, response) => {
-    console.log('POST Agents')
+
     response.json(Locals.AgentsOnline)
 })
 
 pushRouter.get('/queue', async (request, response) => {
-    console.log('POST Queue')
+
     response.json(Locals.Queue)
 })
 
@@ -23,6 +23,14 @@ pushRouter.get('/queue', async (request, response) => {
 pushRouter.get('/inboundreport', async (request, response) => {
     console.log('POST InboundReport')
     response.json(Locals.InboundReport)
+})
+
+pushRouter.get('/eventtest', async (request, response) => {
+    console.log('Event test')
+})
+
+pushRouter.get('/errors', async (request, response) => {
+    response.json(Locals.Errors)
 })
 
 

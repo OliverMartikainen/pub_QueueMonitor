@@ -4,7 +4,6 @@ const API_KEY = config.API_KEY
 const OC_NAME = config.OC_NAME
 const axios = require('axios')
 const fs = require('fs')
-const Locals = require('./locals')
 
 //reconsider names later - service?
 
@@ -43,7 +42,7 @@ const localStore_test = (file, response, dataType) => {
 }
 
 //date in form YYYY-MM-DD
-const GetInboundReport = (date) => axios({
+const getInboundReport = (date) => axios({
     method: 'POST',
     baseURL: REST_URI,
     url: 'inboundreport',
@@ -61,60 +60,46 @@ const GetInboundReport = (date) => axios({
         'ServiceLevelTime': '20',
         'UseServiceTime': 'false'
     }
-}).then(response => {
-    console.log(`API GET - Report:`, response.data.length, response.status, response.statusText)
-    return response.data
 })
 
 
-const GetServices = () => axios(reqConfig('services'))
-    .then(response => {
-        console.log(`API GET - Services:`, response.data.length, response.status, response.statusText)
-        Locals.Services = response.data
-        return response.status
-    })
+const getServices = () => axios(reqConfig('services'))
 
 
 //use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
-const GetAgentProfiles = () => axios(reqConfig('agentprofiles'))
-    .then(response => {
-        console.log(`API GET - Profiles:`, response.data.length, response.status, response.statusText)
-        return response.data
-    })
+const getAgentProfiles = () => axios(reqConfig('agentprofiles'))
 
 //get the team of agents
-const GetAgentsAll = () => axios(reqConfig('agents'))
-    .then(response => {
-        console.log(`API GET - Agents:`, response.data.length, response.status, response.statusText)
-        return response.data
-    })
+const getAgentsAll = () => axios(reqConfig('agents'))
 
 //Top level group
-const GetTeams = () => axios(reqConfig('teams'))
-    .then(response => {
-        console.log(`API GET - Teams:`, response.data.length, response.status, response.statusText)
-        return response.data
-    })
+const getTeams = () => axios(reqConfig('teams'))
 
-const GetGeneralQueue = () => axios(reqConfig('generalqueue'))
-    .then(response => {   
-        console.log(`API GET - Queue:           `, response.headers.date, response.data.length, response.status, response.statusText)
-        Locals.Queue = response.data
-        return response.status
-    })
+const getGeneralQueue = () => axios(reqConfig('generalqueue'))
 
-const GetAgentsOnline = () => axios(reqConfig('agentonlinestate'))
-    .then(response => {
-        console.log(`API GET - AgentsOnline:    `, response.headers.date, response.data.length, response.status, response.statusText)
-        Locals.AgentsOnline = response.data
-        return response.status
-    })
+const getAgentsOnline = () => axios(reqConfig('agentonlinestate'))
 
-const HelloWorld = () => axios(reqConfig('helloworld'))
+
+const getDataUpdates = (date) => 
+    axios.all([getGeneralQueue(), getAgentsOnline(), getInboundReport(date)])
     .then(response => {
-        localStore_test('../localDB/db_hello.json', response, 'hello')
+        response.status = 200
+        return response
     })
+    .catch(error => {
+        return {type: 'Data', status: 502, code: error.code, message: 'database connection error - failed getDataUpdates'}
+    })
+const getTeamUpdates = () => 
+    axios.all([getTeams(), getAgentsAll(), getServices(), getAgentProfiles()])
+    .then(response => {
+        response.status = 200
+        return response
+    })
+    .catch(error => {
+        return {type: 'Teams', status: 502, code: error.code, message: 'database connection error - failed getTeamUpdates'}
+    })
+    
 
 module.exports = {
-    GetInboundReport, GetAgentProfiles, GetTeams, GetGeneralQueue, GetAgentsOnline, GetAgentsAll, GetServices
+    getDataUpdates, getTeamUpdates
 }

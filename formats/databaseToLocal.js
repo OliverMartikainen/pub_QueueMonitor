@@ -67,6 +67,10 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
 //return [{ServiceName, ServiceId, ContactsPieces, ProcessedPieces}]
 const setInboundReport = (report_db, services) => {
+    if(!services) {
+        console.log('Serivces missing, report was not formed')
+        return []
+    }
     const findServiceId = (ServiceName) => services.find(service => service.ServiceName === ServiceName).ServiceId
     const ServiceReport = (report) => {
         ServiceName = report.Time
