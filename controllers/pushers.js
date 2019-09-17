@@ -2,7 +2,7 @@
 const Locals = require('./locals')
 //Teams, Services, AgentsAll, AgentsOnline, GeneralQueue, HelloWorld
 
-//need to transform this to get the data, store it in memory and then give it away
+
 const pushRouter = require('express').Router()
 
 pushRouter.get('/teams', async (request, response) => {
@@ -10,12 +10,10 @@ pushRouter.get('/teams', async (request, response) => {
 })
 
 pushRouter.get('/agentsonline', async (request, response) => {
-
     response.json(Locals.AgentsOnline)
 })
 
 pushRouter.get('/queue', async (request, response) => {
-
     response.json(Locals.Queue)
 })
 
@@ -25,8 +23,22 @@ pushRouter.get('/inboundreport', async (request, response) => {
     response.json(Locals.InboundReport)
 })
 
-pushRouter.get('/eventtest', async (request, response) => {
-    console.log('Event test')
+pushRouter.get('/eventtest', (request, res) => {
+    console.log(request.ip) // a way to record all unique connections - middleware to process all requests and log all unique
+    res.status(200).set({
+        'connection': 'keep-alive',
+        'cache-control': 'no-cache',
+        'content-Type': 'text/event-stream'
+    })
+
+    //still need someway to emit data when i want to... 
+    
+    const data = 'hello world!'
+    setInterval(() => {
+        data.timestamp = new Date().toISOString().substr(11,)
+        res.write('data: ' + JSON.stringify({ data }) + '\n\n')
+
+    }, 10000)
 })
 
 pushRouter.get('/errors', async (request, response) => {
