@@ -6,10 +6,10 @@ let Teams //array of team {TeamName, Profiles[{TeamName, AgentId, AgentName, Ser
 let Services //{ServiceName, ServiceId} - used to add ServiceId to Report
 let InboundReport //{ServiceName, ServiceId, ContactsPieces, ProcessedPieces}
 let Errors //backend can report database or other errors to frontend
-
+let Connections
 
 
 
 module.export = {
-    AgentsOnline, Queue, Teams, Services, InboundReport, Errors
+    AgentsOnline, Queue, Teams, Services, InboundReport, Errors, Connections
 }
