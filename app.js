@@ -5,7 +5,7 @@ const cors = require('cors')
 const OC_Service = require('./services/OC_Service')
 const pushRouter = require('./controllers/pushRouter')
 const dataRouter = require('./controllers/dataRouter')
-const Locals = require('./controllers/locals')
+const Locals = require('./data/locals')
 const formats = require('./formats/databaseToLocal')
 
 app.use(cors())
@@ -16,7 +16,9 @@ app.setMaxListeners(100) //small scale testing suggests every connected/active b
 
 Locals.Errors = { Data: {}, Teams: {} } //needs to be initialized for error handling atm
 
-//redundant atm
+    //503 if frontend to backend problem
+    //502 if backend to database problem (backend will send 'Database Error' as response)
+    //500 for all unknowns
 const errorHandling = (response) => { //handles error reporting - could add logging - atm deals only with database connection issues
     const type = response.type
     if (Locals.Errors[type].status !== 502) {
@@ -49,7 +51,8 @@ const updateData = async () => {
         queue: processResponse(data[0], 'Queue'),
         agentsOnline: processResponse(data[1], 'AgentsOnline'),
         report: processResponse(data[2], 'Report'),
-        timeStamp: date.substr(11)
+        timeStamp: date.substr(11,8),
+        status: 200
     }
     app.emit('dataUpdates', dataUpdate)
     const connectionsData = app.listenerCount('dataUpdates')
@@ -69,6 +72,13 @@ const updateData = async () => {
 }
 
 const updateTeams = async () => { //probably most resource intensive calculation
+    const handleTeamResponse = (data) => {
+        if (data.status !== 200) { //if problems with database & backend
+            setTimeout(updateTeams, 10000) // try again in 10 sec
+            return errorHandling(data)
+        }
+    }
+    
     const data = await OC_Service.getTeamUpdates() //[teams, AgentsAll, services, profiles]
     if (data.status !== 200) {
         errorHandling(data)
@@ -81,7 +91,8 @@ const updateTeams = async () => { //probably most resource intensive calculation
     let Profiles = processResponse(data[3], 'Profiles') //has agent service link
     const teamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
-        timeStamp: new Date().toISOString().substr(11)
+        timeStamp: new Date().toISOString().substr(11,8),
+        status: 200
     }
     Locals.Teams = teamUpdates
     app.emit('teamUpdates', teamUpdates)
@@ -101,7 +112,7 @@ const initialize = async () => {
 const main = () => {
     initialize()
     setInterval(updateData, 3000) // 3 sec - database updates every 5-6sec
-    setInterval(updateTeams, 3600000) //1h - 3600000 - only change if user changes are done in OC
+    setInterval(updateTeams, 1800000) //30min - 1800000 - only change if user changes are done in OC
 }
 
 

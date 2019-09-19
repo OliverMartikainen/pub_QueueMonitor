@@ -1,8 +1,9 @@
 const pushRouter = require('express').Router()
-const Locals = require('./locals')
+const Locals = require('../data/locals')
 
 pushRouter.get('/teamUpdates', async (request, response) => {
     console.log('connect teamUpdates:', request.ip)
+    const timeoutWait = 31*60*1000 //makes client connection wait for 31 min - team updates done every 30 min
     response.status(200).set({
         'connection': 'keep-alive',
         'cache-control': 'no-cache',
@@ -11,6 +12,7 @@ pushRouter.get('/teamUpdates', async (request, response) => {
     const teamUpdateListener = (data) => {
         response.write(`data: ${JSON.stringify( data )}\n\n`)
     }
+    request.setTimeout(timeoutWait)
     response.app.once('teamInit', teamUpdateListener) //on connect sends latest Team data
     response.app.emit('teamInit', Locals.Teams)
 

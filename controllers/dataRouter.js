@@ -1,7 +1,7 @@
 //where the frontend gets its data from
 //traditional pull router - when frontend polls for data
 //redundant atm - only teams and connections give info
-const Locals = require('./locals')
+const Locals = require('../data/locals')
 const dataRouter = require('express').Router()
 
 dataRouter.get('/teams', async (request, response) => {
