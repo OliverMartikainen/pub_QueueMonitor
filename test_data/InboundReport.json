@@ -1,3 +1,14 @@
 [
-    
+    {
+        "ServiceId" : 1,
+        "ServiceName": "aa",
+        "ContactsPieces": 11,
+        "ProcessedPieces": 8
+    },
+    {
+        "ServiceId" : 2,
+        "ServiceName": "bb",
+        "ContactsPieces": 55,
+        "ProcessedPieces": 1
+    }
 ]
