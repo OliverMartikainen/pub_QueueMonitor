@@ -5,5 +5,12 @@
         "ContactType" : "PBX",
         "MaxQueueTime" : 1234,
         "QueueLength" : 5
+    },
+    {
+        "ServiceName" : "bb",
+        "ServiceId" : 2,
+        "ContactType" : "PBX",
+        "MaxQueueTime" : 1234,
+        "QueueLength" : 5
     }
 ]

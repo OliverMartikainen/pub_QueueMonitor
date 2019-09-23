@@ -2,7 +2,6 @@
     {
         "AgentName" : "aa",
         "AgentId" : 1,
-        "TeamName" : "bb",
-        "ServiceIds" : [1,2]
+        "ServiceId" : [1,2]
     }
 ]

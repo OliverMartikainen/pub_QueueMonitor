@@ -10,35 +10,38 @@ const localRead_test = async (file) => {
     })
 }
 
-const GetServices = () => localRead_test('Services.json')
+const getInboundReport = (date) => localRead_test('InboundReport.json')
+const getServices = () => localRead_test('Services.json')
 
+const getAgentProfiles = () => localRead_test('AgentProfiles.json')
 
-//use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
-const GetAgentProfiles = () => localRead_test('AgentProfiles.json')
+const getAgentsAll = () => localRead_test('Agents.json')
 
-//get the team of agents
-const GetAgentsAll = () => localRead_test('Agents.json')
+const getTeams = () => localRead_test('Teams.json')
 
-//Top level group
-const GetTeams = () => localRead_test('Teams.json')
-
-const GetGeneralQueue = () => {
+const getGeneralQueue = () => {
         console.log(`API GET - Queue:           `)
         Locals.Queue = localRead_test('GeneralQueue.json')
  }
 
-const GetAgentsOnline = () => {
+const getAgentsOnline = () => {
     console.log(`API GET - AgentsOnline:           `)
     Locals.Queue = localRead_test('AgentsOnline.json')
 }
 
-const GetInboundReport = (date) => {
-
-
-    console.log(`API GET - Report:`)
-    return localRead_test('InboundReport.json')
+const getDataUpdates = (date) => {
+    return ({
+        status: 200,
+        data: [getGeneralQueue(), getAgentsOnline(), getInboundReport(date)]
+    })
+}
+const getTeamUpdates = () => {
+    return ({
+        status: 200,
+        data: [getTeams(), getAgentsAll(), getServices(), getAgentProfiles()]
+    })
 }
 
 module.exports = {
-    GetInboundReport, GetAgentProfiles, GetTeams, GetGeneralQueue, GetAgentsOnline, GetAgentsAll, GetServices
+    getDataUpdates, getTeamUpdates
 }
