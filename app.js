@@ -85,17 +85,17 @@ const updateTeams = async () => { //probably most resource intensive calculation
         setTimeout(updateTeams, 10000) // try again in 10 sec
         return
     }
-    let Teams = processResponse(data[0], 'Teams') //main group category
-    let Agents = processResponse(data[1], 'Agents') //has agent - team link
+    const Teams = processResponse(data[0], 'Teams') //main group category
+    const Agents = processResponse(data[1], 'Agents') //has agent - team link
     Locals.Services = processResponse(data[2], 'Services') //Used with reports - needs to be stored
-    let Profiles = processResponse(data[3], 'Profiles') //has agent service link
+    const Profiles = processResponse(data[3], 'Profiles') //has agent service link
     const teamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
         timeStamp: new Date().toISOString().substr(11,8),
         status: 200
     }
     Locals.Teams = teamUpdates
-    app.emit('teamUpdates', teamUpdates)
+    app.emit('teamUpdates', Locals.Teams)
     console.log(`teamUpdates:    ${teamUpdates.timeStamp.substr(0,8)}   |     Listeners: ${app.listenerCount('teamUpdates')}`)
     console.log('t_______________________t')
 }

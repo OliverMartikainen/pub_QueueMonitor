@@ -2,7 +2,6 @@
 //could add reports to this, but then i'd be doing this every update not every 1h
 //or could update this every 1h but update reports part every 6s to avoid making these calculations
 const setTeams = (teams_db, agents_db, profiles_db) => {
-    console.log('what1')
     if (agents_db.length != profiles_db.length) {
         console.log('Agents count mismatch', agents_db.length, profiles_db.length)
     }
@@ -12,6 +11,7 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
         const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
         return ({
             'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in options
+            'AgentFirstName': agent.FirstName, //censoring
             'AgentId': profile.AgentId,
             'TeamName': agent.TeamName,
             'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue
@@ -37,28 +37,33 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     const AgentProfiles = profiles_db.map(profile => AgentProfiler(profile))
     const TeamProfiles = teams_db.map(team => TeamProfiler(team, AgentProfiles))
-    const allTeamsProfile = {
+    const allCombinedProfile = {
         'AgentName': 'ALL TEAMS', //name used in options
-        'AgentId': 0,
+        'AgentFirstName': 'ALL TEAMS',
+        'AgentId': 1,
         'TeamName': 'ALL TEAMS',
         'ServiceIds': ALL_TEAM_services(AgentProfiles) //list used to filter queue
     }
     const allTeamsTeam = {
-        'TeamName': 'ALL TEAMS',
-        'Profiles': [allTeamsProfile]
+        'TeamName': 'ALL TEAMS', //TeamName 'ALL TEAMS' bugs all Profiles.AgentId in frontend - dont know reason, this is workaround
+        'Profiles': [...AgentProfiles]
     }
 
     //Add an ALL TEAMNAME PROFILES for each team
     TeamProfiles.forEach((team, index) => {
-        ALL_TEAM = {
+        teamCombinedProfile = {
             'AgentName': `ALL ${team.TeamName}`, //frontend StatsCounter & OptionsSection (eg Profile sorting) depend on this format - changing this requires changes there
-            'AgentId': index+1, //Could cause issues if database has same agentid - agentid seem to start from 20000 though
+            'AgentFirstName': `ALL ${team.TeamName}`,
+            'AgentId': index+2, //Could cause issues if database has same agentid - agentid seem to start from 20000 though
             'TeamName': team.TeamName,
             'ServiceIds': ALL_TEAM_services(team.Profiles) //all teams services in one profile
         }
-        team.Profiles.unshift(ALL_TEAM)
+        team.Profiles.unshift(teamCombinedProfile)
+        allTeamsTeam.Profiles.unshift(teamCombinedProfile) //adds the teamCombined to ALL TEAMS team
     })
-    TeamProfiles.unshift(allTeamsTeam)
+
+    allTeamsTeam.Profiles.unshift(allCombinedProfile) //adds profile with all serviceIds to ALL TEAM team
+    TeamProfiles.unshift(allTeamsTeam) //adds ALL TEAM team to the teams list
 
     return TeamProfiles
 }
