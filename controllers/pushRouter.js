@@ -34,6 +34,9 @@ pushRouter.get('/dataUpdates', async (request, response) => {
     const dataUpdateListener = (data) => {
         response.write(`data: ${JSON.stringify( data )}\n\n`)
     }
+    response.app.once('dataInit', dataUpdateListener) //on connect sends latest Team data
+    response.app.emit('dataInit', Locals.Data)
+
     response.app.on('dataUpdates', dataUpdateListener)
     request.on('close', () => {
         response.app.removeListener('dataUpdates', dataUpdateListener)

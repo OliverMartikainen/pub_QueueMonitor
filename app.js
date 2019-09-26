@@ -54,6 +54,7 @@ const updateData = async () => {
         timeStamp: date.substr(11,8),
         status: 200
     }
+    Locals.Data = dataUpdate
     app.emit('dataUpdates', dataUpdate)
     const connectionsData = app.listenerCount('dataUpdates')
     const connectionsTeams = app.listenerCount('teamUpdates')
