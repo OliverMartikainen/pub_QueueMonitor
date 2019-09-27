@@ -7,6 +7,9 @@ const pushRouter = require('./controllers/pushRouter')
 const dataRouter = require('./controllers/dataRouter')
 const Locals = require('./data/locals')
 const formats = require('./formats/databaseToLocal')
+const config = require('./utils/config')
+const SERVER_VERSION = config.SERVER_VERSION
+console.log('a', SERVER_VERSION)
 
 app.use(cors())
 app.use('/api/push', pushRouter)
@@ -72,6 +75,7 @@ const updateData = async () => {
     }
 }
 
+//send server version - browser saves in localstorage and refreshes if they are different
 const updateTeams = async () => { //probably most resource intensive calculation
     const handleTeamResponse = (data) => {
         if (data.status !== 200) { //if problems with database & backend
@@ -93,10 +97,11 @@ const updateTeams = async () => { //probably most resource intensive calculation
     const teamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
         timeStamp: new Date().toISOString().substr(11,8),
-        status: 200
+        status: 200,
+        serverVersion: SERVER_VERSION //if server version changes frontend will refresh
     }
+    app.emit('teamUpdates', teamUpdates)
     Locals.Teams = teamUpdates
-    app.emit('teamUpdates', Locals.Teams)
     console.log(`teamUpdates:    ${teamUpdates.timeStamp.substr(0,8)}   |     Listeners: ${app.listenerCount('teamUpdates')}`)
     console.log('t_______________________t')
 }
@@ -104,7 +109,7 @@ const updateTeams = async () => { //probably most resource intensive calculation
 //does async do anything here?
 const initialize = async () => {
     await updateTeams()
-    await updateData()
+    await updateData() //tells frontend backend has restarted and forces browser refresh
 }
 
 
@@ -115,7 +120,6 @@ const main = () => {
     setInterval(updateData, 3000) // 3 sec - database updates every 5-6sec
     setInterval(updateTeams, 1800000) //30min - 1800000 - only change if user changes are done in OC
 }
-
 
 main()
 
