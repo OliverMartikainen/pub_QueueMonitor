@@ -41,30 +41,36 @@ const localStore_test = (file, response, dataType) => {
     })
 }
 
+
 //date in form YYYY-MM-DD
-const getInboundReport = (date) => axios({
-    method: 'POST',
-    baseURL: REST_URI,
-    url: 'inboundreport',
-    headers: { 'ApiKey': API_KEY },
-    data: {
-        'OcName': OC_NAME,
-        'ServiceGroupId': '-1',
-        'ServiceId': '-1',
-        'TeamId': '',
-        'AgentId': '-1',
-        'StartDate': `${date}T00:00:00`,
-        'EndDate': `${date}T23:59:59`,
-        'ContactTypes': 'PBX, EMAIL',
-        'contactReportType': 'Service',
-        'ServiceLevelTime': '20',
-        'UseServiceTime': 'false'
-    }
-})
+const getInboundReport = (date, type) =>
+    axios({
+        method: 'POST',
+        baseURL: REST_URI,
+        url: 'inboundreport',
+        headers: { 'ApiKey': API_KEY },
+        data: {
+            'OcName': OC_NAME,
+            'ServiceGroupId': '-1',
+            'ServiceId': '-1',
+            'TeamId': '',
+            'AgentId': '-1',
+            'StartDate': `${date}T00:00:00`,
+            'EndDate': `${date}T23:59:59`,
+            'ContactTypes': type,
+            'contactReportType': 'Service',
+            'ServiceLevelTime': '20',
+            'UseServiceTime': 'false'
+        }
+    }).then(response => {
+        response.type = type
+        response.date = date
+        return response
+    })
+
 
 
 const getServices = () => axios(reqConfig('services'))
-
 
 //use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
 const getAgentProfiles = () => axios(reqConfig('agentprofiles'))
@@ -80,25 +86,25 @@ const getGeneralQueue = () => axios(reqConfig('generalqueue'))
 const getAgentsOnline = () => axios(reqConfig('agentonlinestate'))
 
 
-const getDataUpdates = (date) => 
-    axios.all([getGeneralQueue(), getAgentsOnline(), getInboundReport(date)])
-    .then(response => {
-        response.status = 200
-        return response
-    })
-    .catch(error => {
-        return {type: 'Data', status: 502, code: error.code, message: 'database connection error - failed getDataUpdates'}
-    })
-const getTeamUpdates = () => 
+const getDataUpdates = (date) =>
+    axios.all([getGeneralQueue(), getAgentsOnline(), getInboundReport(date, 'PBX'), getInboundReport(date, 'email')])
+        .then(response => {
+            response.status = 200
+            return response
+        })
+        .catch(error => {
+            return { type: 'Data', status: 502, code: error.code, message: 'database connection error - failed getDataUpdates' }
+        })
+const getTeamUpdates = () =>
     axios.all([getTeams(), getAgentsAll(), getServices(), getAgentProfiles()])
-    .then(response => {
-        response.status = 200
-        return response
-    })
-    .catch(error => {
-        return {type: 'Teams', status: 502, code: error.code, message: 'database connection error - failed getTeamUpdates'}
-    })
-    
+        .then(response => {
+            response.status = 200
+            return response
+        })
+        .catch(error => {
+            return { type: 'Teams', status: 502, code: error.code, message: 'database connection error - failed getTeamUpdates' }
+        })
+
 
 module.exports = {
     getDataUpdates, getTeamUpdates

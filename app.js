@@ -36,7 +36,7 @@ const processResponse = (response, type) => { //could use hasProperty to indenti
     //if status not 200 write in log?
     const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
     console.log('   ', result)
-    if (type === 'Report') {
+    if (type === 'ReportPBX' || type === 'ReportEmail' || type === 'Report') {
         return formats.setInboundReport(response.data, Locals.Services)
     }
     return response.data
@@ -53,7 +53,8 @@ const updateData = async () => {
     const dataUpdate = {
         queue: processResponse(data[0], 'Queue'),
         agentsOnline: processResponse(data[1], 'AgentsOnline'),
-        report: processResponse(data[2], 'Report'),
+        reportPBX: processResponse(data[2], 'ReportPBX'),
+        reportEmail: processResponse(data[3], 'ReportEmail'),
         timeStamp: date.substr(11,8),
         status: 200
     }
