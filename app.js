@@ -22,6 +22,7 @@ Locals.Errors = { Data: {}, Teams: {} } //needs to be initialized for error hand
     //503 if frontend to backend problem
     //502 if backend to database problem (backend will send 'Database Error' as response)
     //500 for all unknowns
+    //func only logs to backend console, does nothing else atm
 const errorHandling = (response) => { //handles error reporting - could add logging - atm deals only with database connection issues
     const type = response.type
     if (Locals.Errors[type].status !== 502) {
@@ -29,7 +30,7 @@ const errorHandling = (response) => { //handles error reporting - could add logg
         Locals.Errors[type] = response
         return
     }
-    console.log(`Continues ${response.message}`)
+    console.log(`Continues ${response.message}`, type)
 }
 
 const processResponse = (response, type) => { //could use hasProperty to indentify
@@ -47,6 +48,11 @@ const updateData = async () => {
     const data = await OC_Service.getDataUpdates(date.substr(0, 10)) // date //YYYY-MM-DD [queue, agentsOnline, report]
     if (data.status !== 200) {
         errorHandling(data)
+        const errorData = {
+            status: data.status,
+            message: data.message
+        }
+        app.emit('dataUpdates', errorData)
         return
     }
     //if scaling needed in future implement caching for shared data over instances
