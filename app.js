@@ -113,10 +113,9 @@ const updateTeams = async () => { //probably most resource intensive calculation
     console.log('t_______________________t')
 }
 
-//does async do anything here?
 const initialize = async () => {
     await updateTeams()
-    await updateData() //tells frontend backend has restarted and forces browser refresh
+    await updateData() //sends version info to frontend, used to force frontend to refresh on update
 }
 
 
@@ -125,7 +124,7 @@ const initialize = async () => {
 const main = () => {
     initialize()
     setInterval(updateData, 3000) // 3 sec - database updates every 5-6sec
-    setInterval(updateTeams, 1800000) //30min - 1800000 - only change if user changes are done in OC
+    setInterval(updateTeams, 1800000) //30min
 }
 
 main()

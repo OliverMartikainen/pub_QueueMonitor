@@ -4,14 +4,15 @@
   "description": "Callmonitor applications backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "watch": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test nodemon index.js",
     "build:ui": "rm -rf build && cd ../cm_front/ && npm run build --prod && cp -r build ../cm_back/"
   },
   "author": "Oliver Martikainen",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^6.0.3",
     "nodemon": "^1.19.1"
   },
   "dependencies": {
