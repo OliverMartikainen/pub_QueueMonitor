@@ -123,7 +123,7 @@ const initialize = async () => {
 //same for Teams & AgentsOnline/Queue
 const main = () => {
     initialize()
-    setInterval(updateData, 3000) // 3 sec - database updates every 5-6sec
+    setInterval(updateData, 2500) // 2.5 sec - database updates every 5-6sec
     setInterval(updateTeams, 1800000) //30min
 }
 
