@@ -8,14 +8,28 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     //frontend expects this structure - if changed OptionsSection needs change
     const AgentProfiler = (profile) => {
-        const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
-        return ({
-            'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in options
-            'AgentFirstName': agent.FirstName, //censoring
-            'AgentId': profile.AgentId,
-            'TeamName': agent.TeamName,
-            'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue
-        })
+           const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
+            try {
+                return ({
+                    'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in options
+                    'AgentFirstName': agent.FirstName, //censoring
+                    'AgentId': profile.AgentId,
+                    'TeamName': agent.TeamName,
+                    'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue
+                })
+            }
+            catch (error) {
+                console.log(error.message)
+                console.log(profile)
+                console.log(agent)
+                return {
+                    'AgentName': `NO AGENT FOUND`, //name used in options
+                    'AgentFirstName': 'NO AGENT FOUND', //censoring
+                    'AgentId': -999,
+                    'TeamName': 'DATA_ERRORS',
+                    'ServiceIds': [] //list used to filter queue
+                }
+            }
     }
     const TeamProfiler = (team, AgentProfiles) => {
         const teamProfiles = AgentProfiles.filter(p => p.TeamName === team.TeamName)

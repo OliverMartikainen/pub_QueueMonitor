@@ -4,6 +4,7 @@ db_users.json
 db_services.json
 data/
 build/
+ecosystem.config.js
 
 # Logs
 logs

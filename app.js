@@ -30,13 +30,13 @@ const errorHandling = (response) => { //handles error reporting - could add logg
         Locals.Errors[type] = response
         return
     }
-    console.log(`Continues ${response.message}`, type)
+    //console.log(`Continues ${response.message}`, type)
 }
 
 const processResponse = (response, type) => { //could use hasProperty to indentify
     //if status not 200 write in log?
     const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
-    console.log('   ', result)
+    console.log('    ', result)
     if (type === 'ReportPBX' || type === 'ReportEmail' || type === 'Report') {
         return formats.setInboundReport(response.data, Locals.Services)
     }
@@ -68,8 +68,8 @@ const updateData = async () => {
     app.emit('dataUpdates', dataUpdate)
     const connectionsData = app.listenerCount('dataUpdates')
     const connectionsTeams = app.listenerCount('teamUpdates')
-    console.log(`dataUpdates:    ${dataUpdate.timeStamp.substr(0,8)}   |     Listeners: ${connectionsData}`)
-    console.log('d_______________________d')
+    //console.log(`dataUpdates:    ${dataUpdate.timeStamp.substr(0,8)}   |     Listeners: ${connectionsData}`)
+    //console.log('d_______________________d')
     Locals.Connections = {data: connectionsData, teams: connectionsTeams, time: date.substr(11,8)}
     if(connectionsTeams !== connectionsData) {
         console.error('listener mismatch!!') //mismatch can happen if conenction done just comparison is done
