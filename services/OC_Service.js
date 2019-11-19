@@ -34,7 +34,7 @@ const getInboundReport = (date, type) =>
             'ServiceLevelTime': '20',
             'UseServiceTime': 'false'
         }
-    }).then(response => {
+    }).then((response) => {
         response.type = type
         response.date = date
         return response
