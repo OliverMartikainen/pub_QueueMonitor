@@ -112,12 +112,14 @@ Errors:
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
  * return
+ 
     `sdfgsdgsd
     dafgsdfgsdf
     sdfgsdfg
     {sdfgfdg (fasfas
     ff)}
     `
+
 Connections:
  * GET: `<host url>/api/pull/admin/connections`
  * Sends JSON data on GET request
