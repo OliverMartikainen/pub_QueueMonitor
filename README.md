@@ -1,10 +1,7 @@
 29.11.2019
 
 
-Queue Monitor
-=======
-
-# QueueMonitor Shared Information
+# QueueMonitor
 
 ## About
 
@@ -14,15 +11,16 @@ It is used to show the support teams:
 support center queue monitor
 - Incoming email and call `queue`'s
 
-The **Frontend** is made with React.js and can be found in [here](https://github.com/OliverMartikainen/pub_QueueMonitor_Frontend).
-The **Backend** is made with Node.js and is in this repository together with a build of the frontend.
-The project uses an external service providers **Database** for the dashboards items, which is not available for the public version.
-The public version uses a test **Database** to showcase the different elements of the dashboard, found [here](https://github.com/OliverMartikainen/pub_QueueMonitor_testDatabase).
+Repositories:
+ * The **Frontend** is made with React.js and can be found in [here](https://github.com/OliverMartikainen/pub_QueueMonitor_Frontend).
+ * The **Backend** is made with Node.js and is in this repository together with a build of the frontend.
+ * The project uses an external service providers **Database** for the dashboards items, which is not available for the public version.
+ * The public version uses a test **Database** to showcase the different elements of the dashboard, found [here](https://github.com/OliverMartikainen/pub_QueueMonitor_testDatabase).
 
 
 ## Worklog
 
-Project worklog available [here](https://github.com/OliverMartikainen/priv_QueueMonitor_Worklog) - private repo.
+Project worklog available [here](https://github.com/OliverMartikainen/priv_QueueMonitor_Worklog) (private repository)
 
 ---
 
@@ -37,32 +35,32 @@ To run this project you need
 
 ## How to use
 
-    1. Run command `npm install` in both repository root folders to install all of their dependancies.
-    2. To use with TestDatabase add an .env file to **Backend** repository root and insert the following text in it:
+1. Run command `npm install` in both repository root folders to install all of their dependancies.
+2. To use with TestDatabase add an .env file to **Backend** repository root and insert the following text in it:
         `TEST_URI=http://localhost:3050
         TEST_PORT=3010`
-    3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
-        - If started successfully should display:
+3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
+    - If started successfully should display:
         `Test database server running from port 3010`
-    4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
-        - If started successfully should display:
+4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
+    - If started successfully should display:
         `Connecting to TestDatabase in http://localhost:3050
         Server version <server version number> running from port 3010
         teamUpdates:    <timestamp of data>   |     Listeners: 0
         _______________________`
-    5. In a **Google Chrome** or **Mozilla Firefox** browser navigate to `http://localhost:3010`
-        - Must on the computer the servers are running on.
+5. In a **Google Chrome** or **Mozilla Firefox** browser navigate to `http://localhost:3010`
+    - Must on the computer the servers are running on.
     
 
 ---
 
-# BACKEND Documentation
+# Backend Documentation
 
 The Backend does not use any authentication with frontend due to expected use case and hosting location. The backend does not read any data from the frontend, it only sends.
 
 The Backend does authenticate with the actual Database, however the TestDatabase does not do any authentication checks.
 
-## BACKEND API Endpoints
+## Backend API Endpoints
 
 Backend has two different brances:
  * `/api/push/`, which use Server Sent Events to push data to the frontend
@@ -74,7 +72,7 @@ Found in `/controllers/` folder.
 EXAMPLE:
 `<host url>/api/push/<endpoint url>`
 
-TEAMUPDATES:
+TeamUpdates:
  * `<host url>/api/push/teamUpdates`
  * Sends JSON.string data every 30 minutes
  * returns:
@@ -84,7 +82,7 @@ TEAMUPDATES:
         }
     }`
 
-DATAUPDATES:
+DataUpdates:
  * `<host url>/api/push/dataUpdates`
  * Sends JSON.string data every ~3 seconds
  * returns:
@@ -97,27 +95,31 @@ DATAUPDATES:
 
 `<host url>/api/pull/<endpoint url>`
 
-TEAMS:
+Teams:
  * GET: `<host url>/api/pull/teams`
  * Sends JSON data on GET request
  * returns:
     `
     `
 
-TEAMS:
+Errors:
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
- * returns:
+ * return
+    `sdfgsdgsd
+    dafgsdfgsdf
+    sdfgsdfg
+    {sdfgfdg (fasfas
+    ff)}
     `
-    `
-TEAMS:
+Connections:
  * GET: `<host url>/api/pull/admin/connections`
  * Sends JSON data on GET request
  * returns:
     `
     `
 
-DEPRECATED:
+Deprecated Endpoints:
  * `<host url>/api/pull/agentsonline`
  * `<host url>/api/pull/queue`
  * `<host url>/api/pull/inboundreport`
