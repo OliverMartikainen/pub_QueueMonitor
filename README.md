@@ -67,7 +67,7 @@ The Backend does authenticate with the actual Database, however the TestDatabase
     3. npm run showcase
     4. npm run build:ui
 
-## Backend API Endpoints
+## Backend API Endpoints - _WIP_
 
 Backend has two different brances in `/controllers/` folder:
  * `/api/push/`, which use Server Sent Events to push data to the frontend
@@ -112,7 +112,7 @@ Errors:
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
  * return
- 
+
     `sdfgsdgsd
     dafgsdfgsdf
     sdfgsdfg
