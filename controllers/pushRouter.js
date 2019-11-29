@@ -1,6 +1,16 @@
 const pushRouter = require('express').Router()
 const Locals = require('../data/locals')
 
+/** 
+ * Uses SSE method to push data to frontend.
+ * <host url>/api/push/<endpoint url>
+ */
+
+
+/**
+ * Sends the Teams data used in frontends Options
+ * Updates every 30 minutes
+ */
 pushRouter.get('/teamUpdates', async (request, response) => {
     console.log('connect teamUpdates:', request.ip)
     const timeoutWait = 31 * 60 * 1000 //makes client connection wait for 31 min - team updates done every 30 min
@@ -19,14 +29,19 @@ pushRouter.get('/teamUpdates', async (request, response) => {
     }
 
     response.app.on('teamUpdates', teamUpdateListener) //subsribes to team updates
-    request.on('close', () => {
+    request.on('close', () => {                         //removes listeners from closed connections
         response.app.removeListener('teamUpdates', teamUpdateListener)
         console.log('closed teamUpdates:', request.ip)
     })
 })
 
+
+/**
+ * Sends the Queue, AgentsOnline, and InboundReport data used in frontends active dasboard
+ * Updates every ~3 seconds
+ */
 pushRouter.get('/dataUpdates', async (request, response) => {
-    //implement middleware for request logging
+    //implement middleware for request logging at some point
     console.log('connect dataUpdates:', request.ip)
     response.status(200).set({
         'connection': 'keep-alive',
@@ -41,8 +56,8 @@ pushRouter.get('/dataUpdates', async (request, response) => {
         response.app.emit('dataInit', Locals.Data)
     }
 
-    response.app.on('dataUpdates', dataUpdateListener)
-    request.on('close', () => {
+    response.app.on('dataUpdates', dataUpdateListener) //subsribes to data updates
+    request.on('close', () => {                     //removes listeners from closed connections
         response.app.removeListener('dataUpdates', dataUpdateListener)
         console.log('closed dataUpdate:', request.ip)
     })
