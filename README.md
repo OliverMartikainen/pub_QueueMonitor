@@ -1,4 +1,4 @@
-29.11.2019
+Last Updated: 29.11.2019
 
 
 # QueueMonitor
@@ -8,8 +8,7 @@
 Queue Monitor is a fullstack project that is deployed as a dashboard for support center teams.
 It is used to show the support teams:
 - Staff status and availability (referred to as `agents`)
-support center queue monitor
-- Incoming email and call `queue`'s
+- Incoming email and call queue's
 
 Repositories:
  * The **Frontend** is made with React.js and can be found in [here](https://github.com/OliverMartikainen/pub_QueueMonitor_Frontend).
@@ -60,12 +59,19 @@ The Backend does not use any authentication with frontend due to expected use ca
 
 The Backend does authenticate with the actual Database, however the TestDatabase does not do any authentication checks.
 
+## Backend Script Commands
+
+    Commands:
+    1. npm start
+    2. npm run watch
+    3. npm run showcase
+    4. npm run build:ui
+
 ## Backend API Endpoints
 
-Backend has two different brances:
+Backend has two different brances in `/controllers/` folder:
  * `/api/push/`, which use Server Sent Events to push data to the frontend
  * `/api/pull/`, which is used to GET data from backend **NOT IN ACTIVE USE**
-Found in `/controllers/` folder.
 
 **PUSH CONTROLLER**
 
