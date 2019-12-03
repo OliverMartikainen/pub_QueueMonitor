@@ -111,9 +111,8 @@ Teams:
 Errors:
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
- * return
-
-    `sdfgsdgsd
+ * return:
+    - `sdfgsdgsd
     dafgsdfgsdf
     sdfgsdfg
     {sdfgfdg (fasfas
