@@ -4,11 +4,16 @@ const API_KEY = config.API_KEY
 const OC_NAME = config.OC_NAME
 const axios = require('axios')
 
-const reqConfig = (URL) => {            //returns JSON for request configuration
+/**
+ * See database API for endpoints
+ * 
+ */
+
+const reqConfig = (URL) => { //returns JSON for request configuration
     return {
         method: 'POST',
         baseURL: REST_URI,
-        url: URL,                  //determines what is requested
+        url: URL,                  //determines endpoint
         headers: { 'ApiKey': API_KEY },
         data: { 'OcName': OC_NAME }
     }
@@ -40,19 +45,16 @@ const getInboundReport = (date, type) =>
         return response
     })
 
+//for connection ServiceIds to ServiceNames in InboundReport
 const getServices = () => axios(reqConfig('services'))
-
-//use these 3 to form filters - by team and by agent - check that Profiles == AgentsAll length
+//use these 3 to form filters in frontend (to filter queues and AgentsOnline) - by team && agent - check that Profiles == Agents length
 const getAgentProfiles = () => axios(reqConfig('agentprofiles'))
-
 //get the team of agents
-const getAgentsAll = () => axios(reqConfig('agents'))
-
-//Top level group
+const getAgents = () => axios(reqConfig('agents'))
 const getTeams = () => axios(reqConfig('teams'))
 
-const getGeneralQueue = () => axios(reqConfig('generalqueue'))
 
+const getGeneralQueue = () => axios(reqConfig('generalqueue'))
 const getAgentsOnline = () => axios(reqConfig('agentonlinestate'))
 
 
@@ -67,7 +69,7 @@ const getDataUpdates = (date) =>
         })
 
 const getTeamUpdates = () =>
-    axios.all([getTeams(), getAgentsAll(), getServices(), getAgentProfiles()])
+    axios.all([getTeams(), getAgents(), getServices(), getAgentProfiles()])
         .then(response => {
             response.status = 200
             return response

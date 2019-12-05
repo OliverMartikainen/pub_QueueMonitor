@@ -1,6 +1,25 @@
-
-//could add reports to this, but then i'd be doing this every update not every 1h
-//or could update this every 1h but update reports part every 6s to avoid making these calculations
+/**
+ * Function that creates the Teams json data sent to frontend in "teamUpdates" stream
+ * Requires matching data from several different endpoints in database (mostly to do with Agent.FirstName and ServiceIds)
+ * - some data sources only uses AgentNames, others only AgentId, etc.
+ * 
+ * params are all the unchanged data recieved from database (endpoints /teams, /agents, /profiles)
+ * const Teams = 
+ * {
+ *      TeamName: String,
+ *      Profiles:   {
+ *                      AgentName: String,
+ *                      AgentFirstName: String,
+ *                      AgentId: Number,
+ *                      ServiceIds: [Numbers]
+ *                  }
+ * }
+ * 
+ * @param {*} teams_db 
+ * @param {*} agents_db 
+ * @param {*} profiles_db
+ * @return {Teams}
+ */
 const setTeams = (teams_db, agents_db, profiles_db) => {
     if (agents_db.length != profiles_db.length) {
         console.log('Agents count mismatch', agents_db.length, profiles_db.length)
@@ -8,28 +27,28 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     //frontend expects this structure - if changed OptionsSection needs change
     const AgentProfiler = (profile) => {
-           const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
-            try {
-                return ({
-                    'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in options
-                    'AgentFirstName': agent.FirstName, //censoring
-                    'AgentId': profile.AgentId,
-                    'TeamName': agent.TeamName,
-                    'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue
-                })
+        const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
+        try {
+            return ({
+                'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in frontend options
+                'AgentFirstName': agent.FirstName, //for frontend "Censor"
+                'AgentId': profile.AgentId,
+                'TeamName': agent.TeamName,
+                'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue in fronted
+            })
+        }
+        catch (error) {
+            console.log(error.message)
+            console.log(profile)
+            console.log(agent)
+            return {
+                'AgentName': 'NO AGENT FOUND', //name used in options
+                'AgentFirstName': 'NO AGENT FOUND', //censoring
+                'AgentId': -999,
+                'TeamName': 'DATA_ERRORS',
+                'ServiceIds': [] //list used to filter queue
             }
-            catch (error) {
-                console.log(error.message)
-                console.log(profile)
-                console.log(agent)
-                return {
-                    'AgentName': `NO AGENT FOUND`, //name used in options
-                    'AgentFirstName': 'NO AGENT FOUND', //censoring
-                    'AgentId': -999,
-                    'TeamName': 'DATA_ERRORS',
-                    'ServiceIds': [] //list used to filter queue
-                }
-            }
+        }
     }
     const TeamProfiler = (team, AgentProfiles) => {
         const teamProfiles = AgentProfiles.filter(p => p.TeamName === team.TeamName)
@@ -65,10 +84,10 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     //Add an ALL TEAMNAME PROFILES for each team
     TeamProfiles.forEach((team, index) => {
-        teamCombinedProfile = {
+        const teamCombinedProfile = {
             'AgentName': `ALL ${team.TeamName}`, //frontend StatsCounter & OptionsSection (eg Profile sorting) depend on this format - changing this requires changes there
             'AgentFirstName': `ALL ${team.TeamName}`,
-            'AgentId': index+2, //Could cause issues if database has same agentid - agentid seem to start from 20000 though
+            'AgentId': index + 2, //Could cause issues if database has same agentid - agentid seem to start from 20000 though
             'TeamName': team.TeamName,
             'ServiceIds': ALL_TEAM_services(team.Profiles) //all teams services in one profile
         }
@@ -82,17 +101,24 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
     return TeamProfiles
 }
 
-//return [{ServiceName, ServiceId, ContactsPieces, ProcessedPieces}]
+/**
+ * Function to create InboundReport that is part of "dataUpdates"
+ * database InboundReport has too much info and lacks ServiceId, so need "Services" to match ServiceName to ServiceId 
+ * 
+ * @param {*} report_db //from database /inboundreport
+ * @param {*} services  //from database /services
+ * @return {InboundReport} = [{String, Numb, Numb, Numb}] === [{ServiceName, ServiceId, ContactsPieces, ProcessedPieces}]
+ */
 const setInboundReport = (report_db, services) => {
-    if(!services) {
+    if (!services || !report_db) { //can happen when starting server
         console.log('Serivces missing, report was not formed')
         return []
     }
-    const findServiceId = (ServiceName) => services.find(service => service.ServiceName === ServiceName).ServiceId
+    const findServiceId = (ServiceName) => services.find(service => service.ServiceName === ServiceName).ServiceId  //
     const ServiceReport = (report) => {
-        ServiceName = report.Time
+        const ServiceName = report.Time
         return ({
-            'ServiceName': (ServiceName !== '20099') ? ServiceName : 'ALL_Services',
+            'ServiceName': (ServiceName !== '20099') ? ServiceName : 'ALL_Services', //20099 ServiceId that has total stats for all services
             'ServiceId': (ServiceName !== '20099') ? findServiceId(ServiceName) : -1,
             'ContactsPieces': report.ContactsPieces,
             'ProcessedPieces': report.ProcessedPieces
