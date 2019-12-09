@@ -34,13 +34,13 @@ To run this project you need
 
 ## How to use
 
-1. Run command `npm install` in both repository root folders to install all of their dependancies.
+1. Run command `npm install` in both this and **TestDatabase** repository root folders to install all of their dependancies.
 2. To use with TestDatabase add an .env file to **Backend** repository root and insert the following text in it:
         `TEST_URI=http://localhost:3050
         TEST_PORT=3010`
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
-        `Test database server running from port 3010`
+        `Test database server running from port 3050`
 4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
     - If started successfully should display:
         `Connecting to TestDatabase in http://localhost:3050
