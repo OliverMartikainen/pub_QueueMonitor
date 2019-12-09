@@ -46,8 +46,8 @@ const errorHandling = (response) => {
  * @return {Object}
  */
 const processResponse = (response, type) => {
-    /*const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
-    console.log('    ', result)*/
+    const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
+    console.log('    ', result)
     if (config.MODE === 'record') {
         const recordTestData = require('./utils/recordTestData')
         recordTestData(response, type, count)

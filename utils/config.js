@@ -10,8 +10,8 @@ const SERVER_VERSION = '0.0.9' //this way npm run watch - forces frontend to upd
 
 if(MODE === 'test') {
     REST_URI = process.env.TEST_URI
-    API_KEY = process.env.TEST_KEY
-    OC_NAME = process.env.TEST_NAME
+    API_KEY = 'TestKey'
+    OC_NAME = 'TestName'
     PORT = process.env.TEST_PORT
     console.log('Connecting to TestDatabase in', REST_URI)
 }
