@@ -3,7 +3,6 @@ db_teams.json
 db_users.json
 db_services.json
 testdata/
-build/
 ecosystem.config.js
 set
 recordTestData.js
