@@ -1,14 +1,14 @@
 {
   "name": "cm_back",
   "version": "0.0.1",
-  "description": "Callmonitor applications backend",
+  "description": "QueueMonitor applications backend",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "record": "cross-env NODE_ENV=record node index.js",
     "watch": "cross-env NODE_ENV=development nodemon index.js",
     "showcase": "cross-env NODE_ENV=test nodemon index.js",
-    "build:ui": "rm -rf build && cd ../cm_front/ && npm run build --prod && cp -r build ../cm_back/"
+    "build:ui": "rm -rf build && cd ../pub_QueueMonitor_Frontend/ && npm run build --prod && cp -r build ../pub_QueueMonitor/"
   },
   "author": "Oliver Martikainen",
   "license": "ISC",
