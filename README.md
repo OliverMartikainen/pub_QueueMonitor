@@ -82,7 +82,8 @@ Backend has two different brances in `/controllers/` folder:
 EXAMPLE:
 `<host url>/api/push/<endpoint url>`
 With server running go to endpoint anddress to see example of data.
-Need to use `EventSource()` API to make use of the Server Sent Events. [LINK](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
+Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
+ API to make use of the Server Sent Events.
 
 **TeamUpdates**:
  * `<host url>/api/push/teamUpdates`
