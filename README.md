@@ -1,4 +1,4 @@
-Last Updated: 29.11.2019
+Last Updated: 11.12.2019
 
 
 # QueueMonitor
@@ -36,16 +36,17 @@ To run this project you need
 
 1. Run command `npm install` in both this and **TestDatabase** repository root folders to install all of their dependancies.
 2. To use with TestDatabase add an "**.env**" file to **Backend** repository root and insert the following text in it:
-
-        ``` TEST_URI=http://localhost:3050
-            TEST_PORT=3010
-        ```
+        `TEST_URI=http://localhost:3050`<br>
+        `TEST_PORT=3010`<br>
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
-    ```Test database server running from port 3050
+    ```
+        Test database server running from port 3050
+    ```
 4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
     - If started successfully should display:
-    ``` Connecting to TestDatabase in http://localhost:3050
+    ``` 
+        Connecting to TestDatabase in http://localhost:3050
         Server version <server version number> running from port 3010
         teamUpdates:    <timestamp of data>   |     Listeners: 0
         _______________________ 
@@ -84,13 +85,13 @@ With server running go to endpoint anddress to see example of data.
  * `<host url>/api/push/teamUpdates`
  * Sends JSON.string data every 30 minutes
  * Connection settings:
- ```json
+ ```
         'connection': 'keep-alive',
         'cache-control': 'no-cache',
         'content-Type': 'text/event-stream'
  ```
  * returns: <br>
- ```javascript
+ ```
     data:
     {
         "teams":
@@ -121,12 +122,7 @@ With server running go to endpoint anddress to see example of data.
         'content-Type': 'text/event-stream'
  ```
  * returns:
- ```javascript
- var s = "JavaScript syntax highlighting";
- alert(s);
  ```
- 
- ```json
      data:
      {
          "queue":
