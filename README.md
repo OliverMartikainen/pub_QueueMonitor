@@ -36,8 +36,10 @@ To run this project you need
 
 1. Run command `npm install` in both this and **TestDatabase** repository root folders to install all of their dependancies.
 2. To use with TestDatabase add an "**.env**" file to **Backend** repository root and insert the following text in it:
+    ```
         `TEST_URI=http://localhost:3050`<br>
         `TEST_PORT=3010`<br>
+    ```
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
     ```
