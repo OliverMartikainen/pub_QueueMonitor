@@ -164,12 +164,12 @@ Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/Event
      }
 ```
 
-**PULL CONTROLLER**
+### PULL CONTROLLER
 
 EXAMPLE:
 `<host url>/api/pull/<endpoint url>`
 
-Teams:
+**Teams:**
  * GET: `<host url>/api/pull/teams`
  * Sends JSON data on GET request
  * returns:
@@ -193,7 +193,7 @@ Teams:
     }
 ```
 
-Errors:
+**Errors:**
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
  * return:
@@ -218,7 +218,7 @@ Errors:
     }
  ```
 
-Connections:
+**Connections:**
  * GET: `<host url>/api/pull/admin/connections`
  * Sends JSON data on GET request
  * returns:
@@ -230,7 +230,7 @@ Connections:
     }
  ```
 
-Deprecated Endpoints:
+**Deprecated Endpoints:**
  * `<host url>/api/pull/agentsonline`
  * `<host url>/api/pull/queue`
  * `<host url>/api/pull/inboundreport`
