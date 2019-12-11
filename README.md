@@ -37,8 +37,8 @@ To run this project you need
 1. Run command `npm install` in both this and **TestDatabase** repository root folders to install all of their dependancies.
 2. To use with TestDatabase add an "**.env**" file to **Backend** repository root and insert the following text in it:
     ```
-        `TEST_URI=http://localhost:3050`<br>
-        `TEST_PORT=3010`<br>
+        TEST_URI=http://localhost:3050
+        TEST_PORT=3010
     ```
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
@@ -71,7 +71,7 @@ The Backend does authenticate with the actual Database, however the TestDatabase
     3. npm run showcase
     4. npm run build:ui
 
-## Backend API Endpoints - _WIP_
+## Backend API Endpoints
 
 Backend has two different brances in `/controllers/` folder:
  * `/api/push/`, which use Server Sent Events to push data to the frontend
@@ -97,17 +97,17 @@ With server running go to endpoint anddress to see example of data.
     data:
     {
         "teams":
+        [{
+            "TeamName": String,
+            "Profiles:
             [{
+                "AgentName": String,
+                "AgentFirstName": String,
+                "AgentId": Number,
                 "TeamName": String,
-                "Profiles:
-                [{
-                    "AgentName": String,
-                    "AgentFirstName": String,
-                    "AgentId": Number,
-                    "TeamName": String,
-                    "ServiceIds": [Numbers]
-                }]
-            }],
+                "ServiceIds": [Numbers]
+            }]
+        }],
         "timeStamp": String,
         "status": Number,
         "serverVersion": String
@@ -156,11 +156,13 @@ With server running go to endpoint anddress to see example of data.
              "ServiceId": Number,
              "ContactsPieces": Number,
              "ProcessedPieces": Number
-         }]
+         }],
+         "timeStamp": String,
+         "status": Number
      }
 ```
 
-**PULL CONTROLLER**
+**PULL CONTROLLER** - _WIP_
 
 `<host url>/api/pull/<endpoint url>`
 
@@ -168,26 +170,62 @@ Teams:
  * GET: `<host url>/api/pull/teams`
  * Sends JSON data on GET request
  * returns:
-    `
-    `
+ ```
+    {
+    "teams":
+        [{
+            "TeamName": String,
+            "Profiles:
+            [{
+                "AgentName": String,
+                "AgentFirstName": String,
+                "AgentId": Number,
+                "TeamName": String,
+                "ServiceIds": [Numbers]
+            }]
+        }],
+        "timeStamp": String,
+        "status": Number,
+        "serverVersion": String
+    }
+```
 
 Errors:
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
  * return:
-    - `sdfgsdgsd
-    dafgsdfgsdf
-    sdfgsdfg
-    {sdfgfdg (fasfas
-    ff)}
-    `
+ ```
+    {
+        "Data":
+        {
+            "type": String,
+            "status": Number,
+            "code": "String - error header from failed request",
+            "message": "String - error message from failed request",
+            "date": "String - date of error start"
+        },
+        "Teams":
+        {
+            "type": String,
+            "status": Number,
+            "code": "String - error header from failed request",
+            "message": "String - error message from failed request",
+            "date": "String - date of error start"
+        }
+    }
+ ```
 
 Connections:
  * GET: `<host url>/api/pull/admin/connections`
  * Sends JSON data on GET request
  * returns:
-    `
-    `
+ ```
+    {
+        "data": Number,
+        "teams": Number,
+        "time": "String - eg: '17:04:53' "
+    }
+ ```
 
 Deprecated Endpoints:
  * `<host url>/api/pull/agentsonline`
@@ -198,11 +236,14 @@ Deprecated Endpoints:
 
 **TestDatabase** and **Frontend** both have their own README.md in their own respective repositories.
 
+### Further Development Thoughts
+
 Could move data transformation happening in backend's `/formats/databaseToLocal.js` to frontend.
 Could add tests for backend.
 Could add data validation for information sent by database to avoid any problems with corrupted data sent by database.
 Could improve logging.
 Could separate database calls/cache information recieved to allow scaling without excess requests to database.
+Could improve frontend filter selection and allow choosing what parts of dashboard is shown
 
 # Author
 
