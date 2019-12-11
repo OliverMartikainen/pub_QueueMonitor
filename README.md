@@ -35,21 +35,19 @@ To run this project you need
 ## How to use
 
 1. Run command `npm install` in both this and **TestDatabase** repository root folders to install all of their dependancies.
-2. To use with TestDatabase add an .env file to **Backend** repository root and insert the following text in it:
-        `TEST_URI=http://localhost:3050
-        TEST_PORT=3010`
+2. To use with TestDatabase add an "**.env**" file to **Backend** repository root and insert the following text in it:
+        `TEST_URI=http://localhost:3050`<br>
+        `TEST_PORT=3010`
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
         `Test database server running from port 3050`
 4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
     - If started successfully should display:
-        `Connecting to TestDatabase in http://localhost:3050
-        Server version <server version number> running from port 3010
-        teamUpdates:    <timestamp of data>   |     Listeners: 0
-        _______________________`
+        `Connecting to TestDatabase in http://localhost:3050`<br>
+        `Server version <server version number> running from port 3010`<br>
+        `teamUpdates:    <timestamp of data>   |     Listeners: 0`<br>
+        `_______________________`
 5. In a **Google Chrome** or **Mozilla Firefox** browser navigate to `http://localhost:3010`
-    - Must on the computer the servers are running on.
-    
 
 ---
 
@@ -77,16 +75,32 @@ Backend has two different brances in `/controllers/` folder:
 
 EXAMPLE:
 `<host url>/api/push/<endpoint url>`
+With server running go to endpoint anddress to see example of data.
 
 TeamUpdates:
  * `<host url>/api/push/teamUpdates`
  * Sends JSON.string data every 30 minutes
- * returns:
-    `{
-        data: {
-            teams: stuff stuff
-        }
-    }`
+ * returns: <br>
+     `{`<br>
+        `data:`<br>
+        `{`<br>
+            `"teams": `<br>
+            `[{`<br>
+                `"TeamName": String,`<br>
+                `"Profiles:`<br>
+                `[{`<br>
+                    `"AgentName": String,`<br>
+                    `"AgentFirstName": String,`<br>
+                    `"AgentId": Number,`<br>
+                    `"TeamName": String,`<br>
+                    `"ServiceIds": [Numbers]`
+                `}]`<br>
+            `}],`<br>
+        `"timeStamp": String,`<br>
+        `"status": Number,`<br>
+        `"serverVersion": String`<br>
+     `}`<br>
+
 
 DataUpdates:
  * `<host url>/api/push/dataUpdates`
