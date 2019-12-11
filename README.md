@@ -43,10 +43,10 @@ To run this project you need
         `Test database server running from port 3050`
 4. In **Backend** (this repos) root run command `npm run showcase` to start the QueueMonitor server and connect it to the **TestDatabase**
     - If started successfully should display:
-        `Connecting to TestDatabase in http://localhost:3050`<br>
-        `Server version <server version number> running from port 3010`<br>
-        `teamUpdates:    <timestamp of data>   |     Listeners: 0`<br>
-        `_______________________`
+    ``` Connecting to TestDatabase in http://localhost:3050
+        Server version <server version number> running from port 3010
+        teamUpdates:    <timestamp of data>   |     Listeners: 0
+        _______________________ ```
 5. In a **Google Chrome** or **Mozilla Firefox** browser navigate to `http://localhost:3010`
 
 ---
@@ -81,26 +81,27 @@ TeamUpdates:
  * `<host url>/api/push/teamUpdates`
  * Sends JSON.string data every 30 minutes
  * returns: <br>
-     `{`<br>
-        `data:`<br>
-        `{`<br>
-            `"teams": `<br>
-            `[{`<br>
-                `"TeamName": String,`<br>
-                `"Profiles:`<br>
-                `[{`<br>
-                    `"AgentName": String,`<br>
-                    `"AgentFirstName": String,`<br>
-                    `"AgentId": Number,`<br>
-                    `"TeamName": String,`<br>
-                    `"ServiceIds": [Numbers]`
-                `}]`<br>
-            `}],`<br>
-        `"timeStamp": String,`<br>
-        `"status": Number,`<br>
-        `"serverVersion": String`<br>
-     `}`<br>
-
+ ```
+     {
+        data:
+        {
+            "teams":
+            [{
+                "TeamName": String,
+                "Profiles:
+                [{
+                    "AgentName": String,
+                    "AgentFirstName": String,
+                    "AgentId": Number,
+                    "TeamName": String,
+                    "ServiceIds": [Numbers]
+                }]
+            }],
+        "timeStamp": String,
+        "status": Number,
+        "serverVersion": String
+     }
+```
 
 DataUpdates:
  * `<host url>/api/push/dataUpdates`
