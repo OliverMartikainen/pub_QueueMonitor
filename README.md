@@ -46,7 +46,8 @@ To run this project you need
     ``` Connecting to TestDatabase in http://localhost:3050
         Server version <server version number> running from port 3010
         teamUpdates:    <timestamp of data>   |     Listeners: 0
-        _______________________ ```
+        _______________________ 
+    ```
 5. In a **Google Chrome** or **Mozilla Firefox** browser navigate to `http://localhost:3010`
 
 ---
@@ -71,21 +72,26 @@ Backend has two different brances in `/controllers/` folder:
  * `/api/push/`, which use Server Sent Events to push data to the frontend
  * `/api/pull/`, which is used to GET data from backend **NOT IN ACTIVE USE**
 
-**PUSH CONTROLLER**
+### PUSH CONTROLLER
 
 EXAMPLE:
 `<host url>/api/push/<endpoint url>`
 With server running go to endpoint anddress to see example of data.
 
-TeamUpdates:
+**TeamUpdates**:
  * `<host url>/api/push/teamUpdates`
  * Sends JSON.string data every 30 minutes
+ * Connection settings:
+ ```
+        'connection': 'keep-alive',
+        'cache-control': 'no-cache',
+        'content-Type': 'text/event-stream'
+ ```
  * returns: <br>
  ```
-     {
-        data:
-        {
-            "teams":
+    data:
+    {
+        "teams":
             [{
                 "TeamName": String,
                 "Profiles:
@@ -100,17 +106,59 @@ TeamUpdates:
         "timeStamp": String,
         "status": Number,
         "serverVersion": String
-     }
+    }
 ```
 
-DataUpdates:
+**DataUpdates**:
  * `<host url>/api/push/dataUpdates`
  * Sends JSON.string data every ~3 seconds
+ * Connection settings:
+ ```
+        'connection': 'keep-alive',
+        'cache-control': 'no-cache',
+        'content-Type': 'text/event-stream'
+ ```
  * returns:
-    `{
-        idk what this will look like
-    }`
-
+ ```javascript
+ var s = "JavaScript syntax highlighting";
+ alert(s);
+ ```
+ 
+ ```json
+     data:
+     {
+         "queue":
+         [{
+             "ServiceId": Number,
+             "ServiceName": String,
+             "ContactType": String,
+             "QueueLength": Number,
+             "MaxQueueTime": Number
+         }],
+         "agentsOnline":
+         [{
+             "AgentId": Number,
+             "AgentName": String,
+             "Team": String,
+             "Reason": String,
+             "Duration":
+         }],
+         "reportPBX":
+         [{
+             "ServiceName": String,
+             "ServiceId": Number,
+             "ContactsPieces": Number,
+             "ProcessedPieces": Number
+         }],
+         "reportEmail":
+         [{
+             "ServiceName": String,
+             "ServiceId": Number,
+             "ContactsPieces": Number,
+             "ProcessedPieces": Number
+         }]
+     }
+```
 
 **PULL CONTROLLER**
 
