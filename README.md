@@ -80,8 +80,8 @@ Backend has two different brances in `/controllers/` folder:
 ### PUSH CONTROLLER
 
 EXAMPLE:
-`<host url>/api/push/<endpoint url>`
-With server running go to endpoint anddress to see example of data.
+`<host url>/api/push/<endpoint url>`  
+With server running go to endpoint anddress to see example of data.  
 Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
  API to make use of the Server Sent Events.
 
@@ -164,8 +164,9 @@ Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/Event
      }
 ```
 
-**PULL CONTROLLER** - _WIP_
+**PULL CONTROLLER**
 
+EXAMPLE:
 `<host url>/api/pull/<endpoint url>`
 
 Teams:
