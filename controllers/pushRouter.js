@@ -8,7 +8,7 @@ const Locals = require('../data/locals')
 
 
 /**
- * Sends the Teams data used in frontends Options
+ * Sends the Teams data used in frontends Options to choose filters for the dataUpdates data.
  * Updates every 30 minutes
  */
 pushRouter.get('/teamUpdates', async (request, response) => {
@@ -28,7 +28,7 @@ pushRouter.get('/teamUpdates', async (request, response) => {
         response.app.emit('teamInit', Locals.Teams)
     }
 
-    response.app.on('teamUpdates', teamUpdateListener) //subsribes to team updates
+    response.app.on('teamUpdates', teamUpdateListener) //subscribes to team updates
     request.on('close', () => {                         //removes listeners from closed connections
         response.app.removeListener('teamUpdates', teamUpdateListener)
         console.log('closed teamUpdates:', request.ip)
@@ -56,7 +56,7 @@ pushRouter.get('/dataUpdates', async (request, response) => {
         response.app.emit('dataInit', Locals.Data)
     }
 
-    response.app.on('dataUpdates', dataUpdateListener) //subsribes to data updates
+    response.app.on('dataUpdates', dataUpdateListener) //subscribes to data updates
     request.on('close', () => {                     //removes listeners from closed connections
         response.app.removeListener('dataUpdates', dataUpdateListener)
         console.log('closed dataUpdate:', request.ip)

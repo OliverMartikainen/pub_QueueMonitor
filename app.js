@@ -46,8 +46,8 @@ const errorHandling = (response) => {
  * @return {Object}
  */
 const processResponse = (response, type) => {
-    const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
-    console.log('    ', result)
+    /*const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
+    console.log('    ', result)*/
     if (config.MODE === 'record') {
         const recordTestData = require('./utils/recordTestData')
         recordTestData(response, type, count)
@@ -64,7 +64,7 @@ const processResponse = (response, type) => {
  * Done at start then every 3-6 sec (database updates every 5-6 sec)
  * Only "InboundReport" is formatted before sent, "Queue" and "AgentsOnline" are sent in same format as recieved from database
  * 
- * @emits {"Queue", "AgentsOnline", "ReportsPBX", "ReportEmail"} to /api/push/dataUpdates (pushRouter)
+ * @emits {Queue, AgentsOnline, ReportsPBX, ReportEmail} to /api/push/dataUpdates (pushRouter)
  */
 const updateData = async () => {
     count = count >= 5 ? 1 : (count + 1)
@@ -114,7 +114,7 @@ const updateData = async () => {
  * Gets data from database endpoints /teams, /agents, /services, /profiles
  * 
  * Probably most resource intensive calculation for backend
- * @emits {Teams} to /api/push/teamUpdates
+ * @emits {Teams, Services} to /api/push/teamUpdates
  */
 const updateTeams = async () => {
 
@@ -131,6 +131,7 @@ const updateTeams = async () => {
 
     const TeamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
+        services: Locals.Services,
         timeStamp: new Date().toISOString().substr(11, 8),
         status: 200,
         serverVersion: SERVER_VERSION //if server version changes frontend will refresh

@@ -110,6 +110,11 @@ Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/Event
                 "ServiceIds": [Numbers]
             }]
         }],
+        "services":
+        [{
+            "ServiceName": String,
+            "ServiceId": Number
+        }],
         "timeStamp": String,
         "status": Number,
         "serverVersion": String
@@ -176,20 +181,25 @@ EXAMPLE:
  ```
     {
     "teams":
+    [{
+        "TeamName": String,
+        "Profiles:
         [{
+            "AgentName": String,
+            "AgentFirstName": String,
+            "AgentId": Number,
             "TeamName": String,
-            "Profiles:
-            [{
-                "AgentName": String,
-                "AgentFirstName": String,
-                "AgentId": Number,
-                "TeamName": String,
-                "ServiceIds": [Numbers]
-            }]
-        }],
-        "timeStamp": String,
-        "status": Number,
-        "serverVersion": String
+            "ServiceIds": [Numbers]
+        }]
+    }],
+    "services":
+    [{
+        "ServiceName": String,
+        "ServiceId": Number
+    }],
+    "timeStamp": String,
+    "status": Number,
+    "serverVersion": String
     }
 ```
 
@@ -241,8 +251,7 @@ EXAMPLE:
 
 ### Further Development Thoughts
 
-Could move data transformation happening in backend's `/formats/databaseToLocal.js` to frontend.
-Could add tests for backend.
+Could add tests.
 Could add data validation for information sent by database to avoid any problems with corrupted data sent by database.
 Could improve logging.
 Could separate database calls/cache information recieved to allow scaling without excess requests to database.
