@@ -1,6 +1,6 @@
 {
   "name": "cm_back",
-  "version": "0.0.10",
+  "version": "0.0.9",
   "description": "QueueMonitor applications backend",
   "main": "index.js",
   "scripts": {

@@ -6,6 +6,7 @@ testdata/
 ecosystem.config.js
 set
 recordTestData.js
+priv_*
 
 # Logs
 logs

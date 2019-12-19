@@ -10,6 +10,8 @@ It is used to show the support teams:
 - Staff status and availability (referred to as `agents`)
 - Incoming email and call queue's
 
+Designed to be used on a 1920x1080p monitor.
+
 Repositories:
  * The **Frontend** is made with React.js and can be found in [here](https://github.com/OliverMartikainen/pub_QueueMonitor_Frontend).
  * The **Backend** is made with Node.js and is in this repository together with a build of the frontend.
