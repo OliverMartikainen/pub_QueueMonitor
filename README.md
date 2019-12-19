@@ -41,6 +41,7 @@ To run this project you need
     ```
         TEST_URI=http://localhost:3050
         TEST_PORT=3010
+        OC_PULL_INTERVAL=2500
     ```
 3. In **TestDatabase** root run command `npm start` to start the **TestDatabase** server
     - If started successfully should display:
