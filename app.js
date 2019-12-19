@@ -10,7 +10,7 @@ const config = require('./utils/config')
 const SERVER_VERSION = config.SERVER_VERSION /*Used to force connected browsers to update */
 
 const OC_PULL_INTERVAL = config.OC_PULL_INTERVAL
-let count = 1
+let count = 1 /* used for record mode only*/
 
 app.use(cors())
 app.use('/api/push', pushRouter)
@@ -151,9 +151,8 @@ const initializeServer = async () => {
 /*if services are changed - report will include it in 4 sec but Services will take 1h - untested if it causes errors, prob not.
     same for Teams & AgentsOnline/Queue */
 const main = () => {
-    console.log(OC_PULL_INTERVAL)
     initializeServer()
-    setInterval(updateData, OC_PULL_INTERVAL) // 2.5 sec - database updates every 5-6sec
+    setInterval(updateData, OC_PULL_INTERVAL) // 2.5 sec - database updates every 5-6sec -defined in .env file
     setInterval(updateTeams, 1800000) //30min
 }
 
