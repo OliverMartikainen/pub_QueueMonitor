@@ -5,7 +5,7 @@ const OC_NAME = config.OC_NAME
 const axios = require('axios')
 
 /**
- * See database API for endpoints
+ * See OC database REST API for endpoints
  * 
  */
 
