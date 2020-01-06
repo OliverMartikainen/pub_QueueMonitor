@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-let PORT = process.env.PORT
+let PORT = process.env.PORT || 3001
 let REST_URI = process.env.REST_URI
 let API_KEY = process.env.API_KEY
 let OC_NAME = process.env.OC_NAME
@@ -15,7 +15,7 @@ if(MODE === 'test') {
     REST_URI = process.env.TEST_URI
     API_KEY = 'TestKey'
     OC_NAME = 'TestName'
-    PORT = process.env.TEST_PORT
+    PORT = process.env.TEST_PORT || PORT
     console.log('Connecting to TestDatabase in', REST_URI)
 }
 
