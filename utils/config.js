@@ -6,7 +6,7 @@ let API_KEY = process.env.API_KEY
 let OC_NAME = process.env.OC_NAME
 const MODE = process.env.NODE_ENV
 
-const OC_PULL_INTERVAL = process.env.OC_PULL_INTERVAL
+const OC_PULL_INTERVAL = process.env.OC_PULL_INTERVAL || 5000
 
 //const SERVER_VERSION = process.env.npm_package_version // - package.json version - atm requires complete server restart
 const SERVER_VERSION = '0.0.9' //this way npm run watch - forces frontend to update
