@@ -1,5 +1,5 @@
 {
-  "name": "cm_back",
+  "name": "queuemonitor_backend",
   "version": "0.0.9",
   "description": "QueueMonitor applications backend",
   "main": "index.js",
