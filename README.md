@@ -18,6 +18,8 @@ Repositories:
  * The project uses an external service providers **Database** for the dashboards items, which is not available for the public version.
  * The public version uses a test **Database** to showcase the different elements of the dashboard, found [here](https://github.com/OliverMartikainen/pub_QueueMonitor_testDatabase).
 
+## Host location
+https://queuemonitor.herokuapp.com/
 
 ## Worklog
 
