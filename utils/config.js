@@ -12,7 +12,7 @@ const OC_PULL_INTERVAL = process.env.OC_PULL_INTERVAL || 5000
 const SERVER_VERSION = '0.1.0' //forces frontend to update
 
 if(MODE === 'test') {
-    REST_URI = process.env.TEST_URI 
+    REST_URI = process.env.TEST_URI || 'http://localhost:3050'
     API_KEY = 'TestKey'
     OC_NAME = 'TestName'
     PORT = process.env.TEST_PORT || PORT
