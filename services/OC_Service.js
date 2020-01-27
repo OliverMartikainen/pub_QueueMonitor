@@ -6,7 +6,6 @@ const axios = require('axios')
 
 /**
  * See OC database REST API for endpoints
- * 
  */
 
 const reqConfig = (URL) => { //returns JSON for request configuration

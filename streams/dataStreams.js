@@ -14,12 +14,14 @@ const SERVER_VERSION = config.SERVER_VERSION /*Used to force connected browsers 
  */
 const errorHandling = (response) => {
     const type = response.type
-    if (Locals.Errors[type].status !== 502) {
-        response.date = new Date().toISOString()
-        Locals.Errors[type] = response
+    if (Locals.Errors[type].status === 502) {
         return
     }
-    //console.log(`Continues ${response.message}`, type)
+    let date = new Date()
+    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
+    response.date = date
+    Locals.Errors[type] = response
+    console.error(date, ` - ERROR: ${type} - ${response.status} - ${response.message}`)
 }
 
 /**
@@ -31,8 +33,6 @@ const errorHandling = (response) => {
  * @return {Object}
  */
 const processResponse = (response, type) => {
-    /*const result = `${response.status}  ${response.statusText}  ${response.data.length}     ${type}     ${response.headers.date}`
-    console.log('    ', result)*/
     if (type === 'ReportPBX' || type === 'ReportEmail' || type === 'Report') {
         return formats.setInboundReport(response.data, Locals.Services)
     }
@@ -48,7 +48,8 @@ const processResponse = (response, type) => {
  * @emits {Queue, AgentsOnline, ReportsPBX, ReportEmail} to /api/push/dataUpdates (pushRouter)
  */
 const updateData = async (app) => {
-    const date = new Date().toISOString()
+    let date = new Date()
+    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
     const data = await OC_Service.getDataUpdates(date.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
     if (data.status !== 200) {
@@ -73,18 +74,13 @@ const updateData = async (app) => {
     app.emit('dataUpdates', DataUpdate)
     const connectionsData = app.listenerCount('dataUpdates')
     const connectionsTeams = app.listenerCount('teamUpdates')
-    /* console.log(`dataUpdates:    ${dataUpdate.timeStamp.substr(0,8)}   |     Listeners: ${connectionsData}`)
-    console.log('d_______________________d') */
-    Locals.Connections = { data: connectionsData, teams: connectionsTeams, time: date.substr(11, 8) }
-    if (connectionsTeams !== connectionsData) {
-        console.error('listener mismatch!!') /* mismatch can happen if connection done just comparison is done */
-        console.log('team:', connectionsTeams)
-        console.log('data', connectionsData)
+    let connectionsHighscore = Locals.Connections.highscore
+
+    if (connectionsHighscore < connectionsData) {
+        connectionsHighscore = connectionsData
+        console.log(date, ' - NEW HIGHSCORE: ', connectionsHighscore)
     }
-    if (app.listenerCount('teamInit') !== 0) { /* Browser stuck waiting for Locals.Teams data, prob unnecessary */
-        console.log('TEAM INIT IS NOT ZERO')
-        console.log('team init', app.listenerCount('teamInit'))
-    }
+    Locals.Connections = { data: connectionsData, teams: connectionsTeams, highscore: connectionsHighscore, time: date }
 }
 
 
@@ -109,17 +105,21 @@ const updateTeams = async (app) => {
     Locals.Services = processResponse(data[2], 'Services') //Used with reports - needs to be stored
     const Profiles = processResponse(data[3], 'Profiles') //has agent <--> service link
 
+    let date = new Date()
+    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
+
     const TeamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
         services: Locals.Services,
-        timeStamp: new Date().toISOString().substr(11, 8),
+        timeStamp: date.substr(11, 8),
         status: 200,
         serverVersion: SERVER_VERSION //if server version changes frontend will refresh
     }
     app.emit('teamUpdates', TeamUpdates) //sends teamUpdates datafeed and connected browsers (pushRouter)
     Locals.Teams = TeamUpdates
-    console.log(`teamUpdates:    ${TeamUpdates.timeStamp.substr(0, 8)}   |     Listeners: ${app.listenerCount('teamUpdates')}`)
-    console.log('_______________________')
+
+    console.log(date, ` | OC_SERVICE FETCH: teamUpdates - Length: ${Teams.length} | Status: ${data.status} | Listeners: ${app.listenerCount('teamUpdates')}`)
+
 }
 
 module.exports = {
