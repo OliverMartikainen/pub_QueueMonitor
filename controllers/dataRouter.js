@@ -1,5 +1,6 @@
 const Locals = require('../data/locals')
 const dataRouter = require('express').Router()
+const Logger = require('../utils/logger')
 
 /**
  * For frontend GET requests
@@ -46,7 +47,7 @@ dataRouter.get('/errors', async (request, response) => {
  * Used to check number of connections to backend server 
  */
 dataRouter.get('/admin/connections', async (request, response) => {
-    console.log('visited adming connect:',request.ip)
+    Logger.admin(request)
     response.json(Locals.Connections)
 })
 

@@ -49,8 +49,6 @@ pushRouter.get('/teamUpdates', async (request, response) => {
  */
 pushRouter.get('/dataUpdates', async (request, response) => {
     //implement middleware for request logging at some point
-    const timeoutWait = 5 * 60 * 1000 //add timeout of 5min to
-
     Logger.newConnect(request)
 
     response.status(200).set({
@@ -67,7 +65,6 @@ pushRouter.get('/dataUpdates', async (request, response) => {
             Logger.errorLog('pushRouter teamUpdates', error)
         }
     }
-    request.setTimeout(timeoutWait)
 
     if (Locals.Data && Locals.Data.length !== 0) { //prevents sending empty data on server start
         response.app.once('dataInit', dataUpdateListener) //on connect sends latest Team data

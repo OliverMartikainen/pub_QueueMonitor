@@ -39,11 +39,17 @@ const serverStartDone = (version, port) => {
     console.log(date, ` SERVER STARTUP DONE - VERSION ${version} - PORT ${port}`)
 }
 
+const adminVisit = (request) => {
+    const date = dateNow()
+    console.log(date, ' - ADMIN VISIT - ip: ', request.ip)
+}
+
 module.exports = {
     newConnect,
     closeConnect,
     errorLog,
     getFrontpage,
     serverStart,
-    serverStartDone
+    serverStartDone,
+    adminVisit
 }
