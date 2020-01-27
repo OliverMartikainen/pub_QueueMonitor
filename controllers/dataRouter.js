@@ -47,7 +47,7 @@ dataRouter.get('/errors', async (request, response) => {
  * Used to check number of connections to backend server 
  */
 dataRouter.get('/admin/connections', async (request, response) => {
-    Logger.admin(request)
+    Logger.adminVisit(request)
     response.json(Locals.Connections)
 })
 

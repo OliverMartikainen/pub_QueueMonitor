@@ -1,7 +1,7 @@
 {
   "name": "queuemonitor_backend",
-  "version": "0.0.9",
-  "description": "QueueMonitor applications backend",
+  "version": "0.1.5",
+  "description": "QueueMonitor application backend",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
