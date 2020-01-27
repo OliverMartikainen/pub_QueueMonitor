@@ -8,7 +8,7 @@ const MODE = process.env.NODE_ENV
 
 const OC_PULL_INTERVAL = process.env.OC_PULL_INTERVAL || 5000
 
-//const SERVER_VERSION = process.env.npm_package_version // doesnt work with service version built with nssm
+//const SERVER_VERSION = process.env.npm_package_version || '0.0.1' // doesnt work with service version built with nssm
 const SERVER_VERSION = '0.1.0' //forces frontend to update
 
 if(MODE === 'test') {
