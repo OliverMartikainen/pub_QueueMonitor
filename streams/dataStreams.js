@@ -5,8 +5,8 @@ const config = require('../utils/config')
 const SERVER_VERSION = config.SERVER_VERSION /*Used to force connected browsers to update */
 
 /**
- * Supposed to handle error logging and responses. Doesnt really do anything atm.
- * Only logs to backend console. ToDo at some point?
+ * Sets error status given to frontend & handles error logging.
+ * Logs only on 1st encountered error
  * 
  * 503 if frontend to backend problem
  * 502 if backend to database problem (backend will send 'Database Error' as response)
@@ -97,7 +97,7 @@ const updateTeams = async (app) => {
     const data = await OC_Service.getTeamUpdates() //return: [teams, agents, services, profiles]
     if (data.status !== 200) {
         errorHandling(data)
-        setTimeout(updateTeams, 10000) // try again in 10 sec
+        setTimeout(() => updateTeams(app), 30 * 1000) // try again in 30 sec
         return
     }
     const Teams = processResponse(data[0], 'Teams') //has all TeamNames, used as base for "Locals.Teams"
