@@ -111,7 +111,7 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
  */
 const setInboundReport = (report_db, services) => {
     if (!services || !report_db) { //can happen when starting server
-        console.log('Serivces missing, report was not formed')
+        //console.log('Serivces missing, report was not formed')
         return []
     }
     const findServiceId = (ServiceName) => services.find(service => service.ServiceName === ServiceName).ServiceId  //
