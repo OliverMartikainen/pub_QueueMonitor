@@ -27,28 +27,21 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     //frontend expects this structure - if changed OptionsSection needs change
     const AgentProfiler = (profile) => {
+        /* !! as of 29.9.2020 All 'frozen' agents will not be returned in agents_db,
+        but their profiles will still be returned in profiles_db --> this will result in agents being not found*/
         const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
-        try {
-            return ({
-                'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in frontend options
-                'AgentFirstName': agent.FirstName, //for frontend "Censor"
-                'AgentId': profile.AgentId,
-                'TeamName': agent.TeamName,
-                'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue in fronted
-            })
+        if (!agent) {
+            console.log(`NO AGENT MATCH FOR PROFILE WITH AGENTID: ${profile.AgentId}`)
+            return null
         }
-        catch (error) {
-            console.log(error.message)
-            console.log(profile)
-            console.log(agent)
-            return {
-                'AgentName': 'NO AGENT FOUND', //name used in options
-                'AgentFirstName': 'NO AGENT FOUND', //censoring
-                'AgentId': -999,
-                'TeamName': 'DATA_ERRORS',
-                'ServiceIds': [] //list used to filter queue
-            }
-        }
+
+        return ({
+            'AgentName': `${agent.LastName} ${agent.FirstName}`, //name used in frontend options
+            'AgentFirstName': agent.FirstName, //for frontend "Censor"
+            'AgentId': profile.AgentId,
+            'TeamName': agent.TeamName,
+            'ServiceIds': profile.Profiles.map(list => list.ServiceId) //list used to filter queue in fronted
+        })
     }
     const TeamProfiler = (team, AgentProfiles) => {
         const teamProfiles = AgentProfiles.filter(p => p.TeamName === team.TeamName)
@@ -68,7 +61,11 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     /*ABOVE HELPER FUNCTIONS - BELOW DATA TRANSFORMATION PROCESS*/
 
-    const AgentProfiles = profiles_db.map(profile => AgentProfiler(profile))
+    const AgentProfiles = profiles_db.reduce((arr, profile) => {
+        const agentProfile = AgentProfiler(profile)
+        if(agentProfile) arr.push(agentProfile) //else ignore --> profile.agentId didnt match any agent in agent_db
+        return arr
+    }, [])
     const TeamProfiles = teams_db.map(team => TeamProfiler(team, AgentProfiles))
     const allCombinedProfile = {
         'AgentName': 'ALL TEAMS', //name used in options
