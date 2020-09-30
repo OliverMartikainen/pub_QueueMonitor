@@ -54,26 +54,25 @@ const updateData = async (app) => {
     const date = new Date()
     const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
-    const data = await OC_Service.getDataUpdates(dateString.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
-    if (data.status !== 200) {
-        errorHandling(data)
+    const response = await OC_Service.getDataUpdates(dateString.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
+    if (response.status !== 200) {
+        errorHandling(response)
         const errorData = {
-            status: data.status,
-            message: data.message
+            status: response.status,
+            message: response.message
         }
         app.emit('dataUpdates', errorData)
         return
     } else if (Locals.Errors['Data'].status !== 200) {
         //previously was in error, now is ok
-        errorHandling(data)
+        errorHandling(response)
     }
-    const [resQueueData, resAgentsOnline, resReportPBX, resReportEmail] = data
-
+    const { queue, agentsOnline, reportPBX, reportEmail } = response
     const DataUpdate = {
-        queue: resQueueData.data,
-        agentsOnline: resAgentsOnline.data,
-        reportPBX: formats.setInboundReport(resReportPBX.data, Locals.Teams.services),
-        reportEmail: formats.setInboundReport(resReportEmail.data, Locals.Teams.services),
+        queue,
+        agentsOnline,
+        reportPBX: formats.setInboundReport(reportPBX, Locals.Teams.services),
+        reportEmail: formats.setInboundReport(reportEmail, Locals.Teams.services),
         timeStamp: dateString.substr(11, 8),
         status: 200
     }
@@ -86,6 +85,7 @@ const updateData = async (app) => {
 
     if (connectionsHighscore < connectionsData) {
         connectionsHighscore = connectionsData
+        //for personal interest --> max simultaneous connections
         console.log(' - NEW HIGHSCORE: ', connectionsHighscore)
     }
     Locals.Connections = { data: connectionsData, teams: connectionsTeams, highscore: connectionsHighscore, time: date }
@@ -111,12 +111,7 @@ const updateTeams = async (app) => {
         //previously was in error, now is ok
         errorHandling(data)
     }
-    const [resTeams, resAgents, resServices, resProfiles] = data
-
-    const Teams = resTeams.data //has all TeamNames, used as base for "Locals.Teams"
-    const Agents = resAgents.data //has agent - team link
-    const Services = resServices.data //Used with reports - needs to be stored
-    const Profiles = resProfiles.data //has agent <--> service link
+    const { Teams, Agents, Services, Profiles } = data
 
     const date = new Date()
     const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()

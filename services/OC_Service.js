@@ -59,9 +59,20 @@ const getAgentsOnline = () => axios(reqConfig('agentonlinestate'))
 
 const getDataUpdates = (date) =>
     axios.all([getGeneralQueue(), getAgentsOnline(), getInboundReport(date, 'PBX'), getInboundReport(date, 'email')])
-        .then(response => {
-            response.status = 200
-            return response
+        .then(responseArr => {
+            const [resQueueData, resAgentsOnline, resReportPBX, resReportEmail] = responseArr
+            /* naive assumption that if no error --> all responses status === 200
+                Hasnt really caused any problems in 1 year, will let it be. */
+            return {
+                type: 'Data',
+                status: 200,
+                code: 'OK',
+                message: 'ALL OK',
+                queue: resQueueData.data,
+                agentsOnline: resAgentsOnline.data,
+                reportPBX: resReportPBX.data,
+                reportEmail: resReportEmail.data
+            }
         })
         .catch(error => {
             return { type: 'Data', status: 502, code: error.code, message: 'database connection error - failed getDataUpdates' }
@@ -69,9 +80,21 @@ const getDataUpdates = (date) =>
 
 const getTeamUpdates = () =>
     axios.all([getTeams(), getAgents(), getServices(), getAgentProfiles()])
-        .then(response => {
-            response.status = 200
-            return response
+        .then(responseArr => {
+            /* naive assumption that if no error --> all responses status === 200
+            Hasnt really caused any problems in 1 year, will let it be. */
+            const [resTeams, resAgents, resServices, resProfiles] = responseArr
+
+            return {
+                type: 'Teams',
+                status: 200,
+                code: 'OK',
+                message: 'ALL OK',
+                Teams: resTeams.data,
+                Agents: resAgents.data,
+                Services: resServices.data,
+                Profiles: resProfiles.data
+            }
         })
         .catch(error => {
             return { type: 'Teams', status: 502, code: error.code, message: 'database connection error - failed getTeamUpdates' }
