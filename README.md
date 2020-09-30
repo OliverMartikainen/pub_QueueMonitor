@@ -173,35 +173,6 @@ Need to use [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/Event
 EXAMPLE:
 `<host url>/api/pull/<endpoint url>`
 
-**Teams:**
- * GET: `<host url>/api/pull/teams`
- * Sends JSON data on GET request
- * returns:
- ```
-    {
-    "teams":
-    [{
-        "TeamName": String,
-        "Profiles:
-        [{
-            "AgentName": String,
-            "AgentFirstName": String,
-            "AgentId": Number,
-            "TeamName": String,
-            "ServiceIds": [Numbers]
-        }]
-    }],
-    "services":
-    [{
-        "ServiceName": String,
-        "ServiceId": Number
-    }],
-    "timeStamp": String,
-    "status": Number,
-    "serverVersion": String
-    }
-```
-
 **Errors:**
  * GET: `<host url>/api/pull/errors`
  * Sends JSON data on GET request
@@ -239,10 +210,6 @@ EXAMPLE:
     }
  ```
 
-**Deprecated Endpoints:**
- * `<host url>/api/pull/agentsonline`
- * `<host url>/api/pull/queue`
- * `<host url>/api/pull/inboundreport`
 
 ## Endnotes
 
