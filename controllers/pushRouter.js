@@ -48,7 +48,7 @@ pushRouter.get('/teamUpdates', async (request, response) => {
  */
 pushRouter.get('/dataUpdates', async (request, response) => {
     //implement middleware for request logging at some point
-    console.log(' - CLOSE CONNECTION  - ip: ', request.ip)
+    console.log(' - START CONNECTION  - ip: ', request.ip)
 
     response.status(200).set({
         'connection': 'keep-alive',
