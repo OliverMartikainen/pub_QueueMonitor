@@ -23,24 +23,13 @@ const errorHandling = (response) => {
     const date = new Date()
     const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
-    if (response.status !== 200) {
-        Locals.Errors[type] = {
-            status: response.status,
-            code: response.code,
-            message: response.message,
-            date: dateString //last change in status
-        }
-        console.error(` - ERROR: ${type} - ${response.status} - ${response.message}`)
-    } else {
-        const msg = 'NOW OK'
-        Locals.Errors[type] = {
-            status: response.status,
-            code: 'OK',
-            message: msg,
-            date: dateString //last change in status
-        }
-        console.error(` - ERROR: ${type} - ${response.status} - ${msg}`)
+    Locals.Errors[type] = {
+        status: response.status,
+        code: response.code,
+        message: response.message,
+        date: dateString //last change in status
     }
+    console.error(` - ERROR: ${type} - ${response.status} - ${response.message}`)
 }
 
 /**
@@ -53,7 +42,7 @@ const errorHandling = (response) => {
 const updateData = async (app) => {
     const date = new Date()
     const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
-
+    
     const response = await OC_Service.getDataUpdates(dateString.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
     if (response.status !== 200) {
         errorHandling(response)
