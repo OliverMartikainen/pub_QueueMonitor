@@ -65,7 +65,7 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
 
     const AgentProfiles = profiles_db.reduce((arr, profile) => {
         const agentProfile = AgentProfiler(profile)
-        if(agentProfile) arr.push(agentProfile) //else ignore --> profile.agentId didnt match any agent in agent_db
+        if (agentProfile) arr.push(agentProfile) //else ignore --> profile.agentId didnt match any agent in agent_db
         return arr
     }, [])
     const TeamProfiles = teams_db.map(team => TeamProfiler(team, AgentProfiles))
@@ -113,11 +113,18 @@ const setInboundReport = (report_db, services) => {
         //console.log('Serivces missing, report was not formed')
         return []
     }
-    const findServiceId = (ServiceName) => services.find(service => service.ServiceName === ServiceName).ServiceId  //
+    const findServiceId = (ServiceName) => {
+        const service = services.find(service => service.ServiceName === ServiceName)
+        //got unindentified services here when OC Rest Api update failed & it gave erranous data.
+        if (!service) return -404 //not really doint anything with this.
+
+        return service.ServiceId
+    }
     const ServiceReport = (report) => {
-        const ServiceName = report.Time
+        const ServiceName = report.Time //idk why, but OC Rest Api returns service name in 'Time' property.
         return ({
-            'ServiceName': (ServiceName !== '20099') ? ServiceName : 'ALL_Services', //20099 ServiceId that has total stats for all services
+            //20099 ServiceId that has total stats for all services
+            'ServiceName': (ServiceName !== '20099') ? ServiceName : 'ALL_Services',
             'ServiceId': (ServiceName !== '20099') ? findServiceId(ServiceName) : -1,
             'ContactsPieces': report.ContactsPieces,
             'ProcessedPieces': report.ProcessedPieces
