@@ -1,8 +1,7 @@
-const Logger = require('../utils/logger')
-
 const connectionLogger = (request, response, next) => {
     if(request.url === '/') {
-        Logger.getFrontpage(request)
+        console.log(' - GET FRONTEND      - ip: ', request.ip)
+        console.log('  user-agent: ', request.headers['user-agent'])
     }
     next()
 }

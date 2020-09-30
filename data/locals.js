@@ -1,19 +1,44 @@
+const serverVersion = require('../utils/config').SERVER_VERSION
 /**
  * Used to store slowly updated data, eg "Teams" and "Services" at the moment.
  * If app was scaled this should be replaced with something more elaborate.
  */
-
-let AgentsOnline  // same as API AgentsOnline
-let Queue //same as API GeneralQueue
-let Teams //array of team {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
-let Services //{ServiceName, ServiceId} - used to add ServiceId to Report
-let InboundReport //{ServiceName, ServiceId, ContactsPieces, ProcessedPieces}
-let Errors //backend can report database or other errors to frontend
-let Connections
-let Data
-
-
-
-module.export = {
-    AgentsOnline, Queue, Teams, Services, InboundReport, Errors, Connections, Data
+const Locals = {
+    Teams: {
+        teams: [],
+        services: [],
+        timeStamp: '0',
+        status: 200,
+        serverVersion: serverVersion //if server version changes frontend will refresh
+    },  //array of team {TeamName, Profiles[{TeamName, AgentId, AgentName, ServiceIds}]}
+    Errors: {
+        Data: {
+            status: 200,
+            code: '',
+            message: '',
+            date: '0' //last change in status
+        },
+        Teams: {
+            status: 200,
+            code: '',
+            message: '',
+            date: '0' //last change in status
+        }
+    }, //backend can report database or other errors to frontend
+    Connections: {
+        data: 0,
+        teams: 0,
+        highscore: 0,
+        time: null
+    },
+    Data: { //updated in dataStreams.js
+        queue: [],
+        agentsOnline: [],
+        reportPBX: [],
+        reportEmail: [],
+        timeStamp: '0',
+        status: 200
+    }
 }
+
+module.exports = Locals

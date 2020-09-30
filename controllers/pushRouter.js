@@ -1,6 +1,5 @@
 const pushRouter = require('express').Router()
 const Locals = require('../data/locals')
-const Logger = require('../utils/logger')
 
 /** 
  * Uses SSE method to push data to frontend.
@@ -24,11 +23,11 @@ pushRouter.get('/teamUpdates', async (request, response) => {
         try {
             response.write(`data: ${JSON.stringify(data)}\n\n`)
         } catch (error) {
-            Logger.errorLog('pushRouter teamUpdates', error)
+            console.error(error)
         }
     }
     request.setTimeout(timeoutWait)
-    if (Locals.Teams && Locals.Teams.length !== 0) { //prevents sending empty data on server start
+    if (Locals.Teams && Locals.Teams.timeStamp !== '0') { //prevents sending empty data on server start
         response.app.once('teamInit', teamUpdateListener) //on connect sends latest Team data
         response.app.emit('teamInit', Locals.Teams)
     }
@@ -49,7 +48,7 @@ pushRouter.get('/teamUpdates', async (request, response) => {
  */
 pushRouter.get('/dataUpdates', async (request, response) => {
     //implement middleware for request logging at some point
-    Logger.newConnect(request)
+    console.log(' - CLOSE CONNECTION  - ip: ', request.ip)
 
     response.status(200).set({
         'connection': 'keep-alive',
@@ -62,11 +61,11 @@ pushRouter.get('/dataUpdates', async (request, response) => {
         try {
             response.write(`data: ${JSON.stringify(data)}\n\n`)
         } catch (error) {
-            Logger.errorLog('pushRouter teamUpdates', error)
+            console.error(error)
         }
     }
 
-    if (Locals.Data && Locals.Data.length !== 0) { //prevents sending empty data on server start
+    if (Locals.Data && Locals.Data.timeStamp !== '0') { //prevents sending empty data on server start
         response.app.once('dataInit', dataUpdateListener) //on connect sends latest Team data
         response.app.emit('dataInit', Locals.Data)
     }
@@ -74,8 +73,7 @@ pushRouter.get('/dataUpdates', async (request, response) => {
     response.app.on('dataUpdates', dataUpdateListener) //subscribes to data updates
     request.on('close', () => {                     //removes listeners from closed connections
         response.app.removeListener('dataUpdates', dataUpdateListener)
-
-        Logger.closeConnect(request)
+        console.log(' - CLOSE CONNECTION  - ip: ', request.ip)
     })
 
 })

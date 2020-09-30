@@ -23,6 +23,7 @@
 const setTeams = (teams_db, agents_db, profiles_db) => {
     if (agents_db.length != profiles_db.length) {
         console.log('Agents count mismatch', agents_db.length, profiles_db.length)
+        /* Frozen agents not returned in agents_db, but their profiles are returned in probiles_db, causes mismatch */
     }
 
     //frontend expects this structure - if changed OptionsSection needs change
@@ -31,7 +32,8 @@ const setTeams = (teams_db, agents_db, profiles_db) => {
         but their profiles will still be returned in profiles_db --> this will result in agents being not found*/
         const agent = agents_db.find(agent => agent.AgentId === profile.AgentId) //connects profile with agent & Team
         if (!agent) {
-            console.log(`NO AGENT MATCH FOR PROFILE WITH AGENTID: ${profile.AgentId}`)
+            //console.log(`NO AGENT MATCH FOR PROFILE WITH AGENTID: ${profile.AgentId}`) 
+            //"Agents count mismatch" log above tells us if there are "NO AGENT MATCH" events.
             return null
         }
 

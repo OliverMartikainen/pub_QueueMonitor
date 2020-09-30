@@ -11,34 +11,37 @@ const SERVER_VERSION = config.SERVER_VERSION /*Used to force connected browsers 
  * 503 if frontend to backend problem
  * 502 if backend to database problem (backend will send 'Database Error' as response)
  * 500 for all unknowns
+ * 
+ * Simple quick error logging. Dont really need anything more sophisticated.
  */
 const errorHandling = (response) => {
     const type = response.type
-    if (Locals.Errors[type].status === 502) {
+    if (Locals.Errors[type].status === response.status) { //no change
         return
     }
-    let date = new Date()
-    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
-    response.date = date
-    Locals.Errors[type] = response
-    console.error(date, ` - ERROR: ${type} - ${response.status} - ${response.message}`)
-}
 
-/**
- * Is meant to be used for logging purposes
- * Not really used atm, except to indentify InboundReport data.
- * 
- * @param {*} response 
- * @param {String} type
- * @return {Object}
- */
-const processResponse = (response, type) => {
-    if (type === 'ReportPBX' || type === 'ReportEmail' || type === 'Report') {
-        return formats.setInboundReport(response.data, Locals.Services)
+    const date = new Date()
+    const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
+
+    if (response.status !== 200) {
+        Locals.Errors[type] = {
+            status: response.status,
+            code: response.code,
+            message: response.message,
+            date: dateString //last change in status
+        }
+        console.error(` - ERROR: ${type} - ${response.status} - ${response.message}`)
+    } else {
+        const msg = 'NOW OK'
+        Locals.Errors[type] = {
+            status: response.status,
+            code: 'OK',
+            message: msg,
+            date: dateString //last change in status
+        }
+        console.error(` - ERROR: ${type} - ${response.status} - ${msg}`)
     }
-    return response.data
 }
-
 
 /**
  * Function that sends "Queue", "AgentsOnline" and "InboundReport" data to frontend
@@ -48,10 +51,10 @@ const processResponse = (response, type) => {
  * @emits {Queue, AgentsOnline, ReportsPBX, ReportEmail} to /api/push/dataUpdates (pushRouter)
  */
 const updateData = async (app) => {
-    let date = new Date()
-    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
+    const date = new Date()
+    const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
-    const data = await OC_Service.getDataUpdates(date.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
+    const data = await OC_Service.getDataUpdates(dateString.substr(0, 10)) /* param: YYYY-MM-DD  | return: [queue, agentsOnline, report] */
     if (data.status !== 200) {
         errorHandling(data)
         const errorData = {
@@ -60,16 +63,21 @@ const updateData = async (app) => {
         }
         app.emit('dataUpdates', errorData)
         return
+    } else if (Locals.Errors['Data'].status !== 200) {
+        //previously was in error, now is ok
+        errorHandling(data)
     }
+    const [resQueueData, resAgentsOnline, resReportPBX, resReportEmail] = data
 
     const DataUpdate = {
-        queue: processResponse(data[0], 'Queue'),
-        agentsOnline: processResponse(data[1], 'AgentsOnline'),
-        reportPBX: processResponse(data[2], 'ReportPBX'),
-        reportEmail: processResponse(data[3], 'ReportEmail'),
-        timeStamp: date.substr(11, 8),
+        queue: resQueueData.data,
+        agentsOnline: resAgentsOnline.data,
+        reportPBX: formats.setInboundReport(resReportPBX.data, Locals.Teams.services),
+        reportEmail: formats.setInboundReport(resReportEmail.data, Locals.Teams.services),
+        timeStamp: dateString.substr(11, 8),
         status: 200
     }
+
     Locals.Data = DataUpdate
     app.emit('dataUpdates', DataUpdate)
     const connectionsData = app.listenerCount('dataUpdates')
@@ -78,7 +86,7 @@ const updateData = async (app) => {
 
     if (connectionsHighscore < connectionsData) {
         connectionsHighscore = connectionsData
-        console.log(date, ' - NEW HIGHSCORE: ', connectionsHighscore)
+        console.log(' - NEW HIGHSCORE: ', connectionsHighscore)
     }
     Locals.Connections = { data: connectionsData, teams: connectionsTeams, highscore: connectionsHighscore, time: date }
 }
@@ -99,26 +107,31 @@ const updateTeams = async (app) => {
         errorHandling(data)
         setTimeout(() => updateTeams(app), 30 * 1000) // try again in 30 sec
         return
+    } else if (Locals.Errors['Teams'].status !== 200) {
+        //previously was in error, now is ok
+        errorHandling(data)
     }
-    const Teams = processResponse(data[0], 'Teams') //has all TeamNames, used as base for "Locals.Teams"
-    const Agents = processResponse(data[1], 'Agents') //has agent - team link
-    Locals.Services = processResponse(data[2], 'Services') //Used with reports - needs to be stored
-    const Profiles = processResponse(data[3], 'Profiles') //has agent <--> service link
+    const [resTeams, resAgents, resServices, resProfiles] = data
 
-    let date = new Date()
-    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
+    const Teams = resTeams.data //has all TeamNames, used as base for "Locals.Teams"
+    const Agents = resAgents.data //has agent - team link
+    const Services = resServices.data //Used with reports - needs to be stored
+    const Profiles = resProfiles.data //has agent <--> service link
+
+    const date = new Date()
+    const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
     const TeamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
-        services: Locals.Services,
-        timeStamp: date.substr(11, 8),
+        timeStamp: dateString.substr(11, 8),
+        services: Services,
         status: 200,
         serverVersion: SERVER_VERSION //if server version changes frontend will refresh
     }
+
     app.emit('teamUpdates', TeamUpdates) //sends teamUpdates datafeed and connected browsers (pushRouter)
     Locals.Teams = TeamUpdates
-
-    console.log(date, ` | OC_SERVICE FETCH: teamUpdates - Length: ${Teams.length} | Status: ${data.status} | Listeners: ${app.listenerCount('teamUpdates')}`)
+    console.log(`| OC_SERVICE FETCH: teamUpdates - Length: ${Teams.length} | Status: ${data.status} | Listeners: ${app.listenerCount('teamUpdates')}`)
 
 }
 
