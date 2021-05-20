@@ -105,19 +105,31 @@ const updateTeams = async (app) => {
     const date = new Date()
     const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString()
 
+    //get service ids for each team used to calculate teams inboundreport statistics
+    const reportDate = dateString.substr(0, 10)
+    const promisesPBX = Teams.map(team => OC_Service.getInboundReportTeam(reportDate, 'PBX', team.TeamName))
+    const promisesEmail = Teams.map(team => OC_Service.getInboundReportTeam(reportDate, 'email', team.TeamName))
+    
+    const resultsPBX = await Promise.all(promisesPBX)
+    const resultsEmail = await Promise.all(promisesEmail)
+    
+    //create list of each teams pbx & email service names / ids
+    //should result in an object { teamName: { email: [serviceIds], pbx: [serviceIds] }}
+    const teamServicesIndex = formats.createTeamServiceIndex(Teams, resultsPBX, resultsEmail, Services)
+       
     const TeamUpdates = {
         teams: formats.setTeams(Teams, Agents, Profiles),
         timeStamp: dateString.substr(11, 8),
         services: Services,
+        teamServicesIndex,
         status: 200,
         serverVersion: SERVER_VERSION //if server version changes frontend will refresh
     }
-
     app.emit('teamUpdates', TeamUpdates) //sends teamUpdates datafeed and connected browsers (pushRouter)
     Locals.Teams = TeamUpdates
     console.log(`| OC_SERVICE FETCH: teamUpdates - Length: ${Teams.length} | Status: ${data.status} | Listeners: ${app.listenerCount('teamUpdates')}`)
-
 }
+
 
 module.exports = {
     updateTeams, updateData

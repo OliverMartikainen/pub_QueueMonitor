@@ -134,4 +134,78 @@ const setInboundReport = (report_db, services) => {
     return report_db.map(report => ServiceReport(report))
 }
 
-module.exports = { setTeams, setInboundReport }
+
+/** 
+ * @typedef {{ 
+ * status: Number,
+ * data: Array<{ Time: String }>
+ * type: 'PBX' | 'email',
+ * TeamName: String, //TeamName
+ * date: String
+ * }} teamServicesResult 
+ */
+
+/**
+ *
+ * 
+ * @param {Array<{ TeamName: String }>} teams array of all teamNames 
+ * @param {Array<teamServicesResult>} resultsPBX each teams pbx services - only interested in each objects Time property (has the service name in it)
+ * @param {Array<teamServicesResult>} resultsEmail each teams email services - only interested in each objects Time property (has the service name in it)
+ * @param {Array<{ ServiceName: String, ServiceId: Number }>} services 
+ */
+const createTeamServiceIndex = (teams, resultsPBX, resultsEmail, services) => {
+    const servicesIndex = services.reduce((index, service) => {
+        index[service.ServiceName] = service.ServiceId
+        return index
+    }, {})
+
+    //remove & log failed fetches --> log them?
+    const successPBX = resultsPBX.filter(res => res.status === 200)
+    const successEmail = resultsEmail.filter(res => res.status === 200)
+
+    const failedCount = (resultsPBX.length + resultsEmail.length) - (successEmail.length + successPBX.length)
+    if(failedCount > 0) {
+        const maxCount = resultsPBX.length + resultsEmail.length
+        console.error(`FAILED TO FETCH SERVICE REPORTS FOR SOME TEAMS: ${failedCount}/${maxCount} failed`)
+    }
+
+    //format the results to Array<{ TeamName, type: pbx, serviceIds: array<serviceId> }> 
+    //--> remove all serviceName 20099 --> its just all service data in 1
+    const teamsServicesPBXIndex = successPBX.reduce((index, team) => {
+        const serviceIds = team.data.filter(service => service.Time !== '20099').map(service => {
+            return servicesIndex[service.Time]
+        })
+        index[team.TeamName] = serviceIds
+        return index
+    }, {})
+    const teamsServicesEmailIndex = successEmail.reduce((index, team) => {
+        const serviceIds = team.data.filter(service => service.Time !== '20099').map(service => {
+            return servicesIndex[service.Time]
+        })
+        index[team.TeamName] = serviceIds
+        return index
+    }, {})
+
+
+    //create list of each teams pbx & email service names / ids
+    //should result in an object { teamName: { email: [serviceIds], pbx: [serviceIds] }}
+
+    const teamsServicesIndex = teams.reduce((index, team) => {
+        const emailIds = teamsServicesEmailIndex[team.TeamName]
+        const pbxIds = teamsServicesPBXIndex[team.TeamName]
+        if(!emailIds || !pbxIds) {
+            console.error('MISSING REPORT SERVICE IDS', team.TeamName)
+        }
+
+        index[team.TeamName] = {
+            TeamName: team.TeamName,
+            emailServiceIds: emailIds || [],
+            pbxServiceIds: pbxIds || []
+        }
+        return index
+    }, {})
+    return teamsServicesIndex
+
+}
+
+module.exports = { setTeams, setInboundReport, createTeamServiceIndex }

@@ -7,6 +7,7 @@ const Locals = {
     Teams: {
         teams: [],
         services: [],
+        teamServicesIndex: {},
         timeStamp: '0',
         status: 200,
         serverVersion: serverVersion //if server version changes frontend will refresh
