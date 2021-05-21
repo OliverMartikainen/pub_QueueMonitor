@@ -9,7 +9,7 @@ const MODE = process.env.NODE_ENV
 const OC_PULL_INTERVAL = Number(process.env.OC_PULL_INTERVAL) || 5000
 
 //const SERVER_VERSION = process.env.npm_package_version || '0.0.1' // doesnt work with service version built with nssm
-const SERVER_VERSION = '0.2.0' //forces frontend to update
+const SERVER_VERSION = '0.2.1' //forces frontend to update
 
 if(MODE === 'test') {
     REST_URI = process.env.TEST_URI || 'http://localhost:3050'
